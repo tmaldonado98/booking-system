@@ -1,27 +1,42 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './Main.css';
 import Header from './Header';
 import { Location } from './Location';
 import { Text, Input, Button } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
+import axios from 'axios';
+
 function Main() {
   const [isAnimated, setIsAnimated] = useState(false)
   const [text, setText] = useState('');
-
+  const [zipObj, setZipObj] = useState('');
+  
   function handleChange(event){
       setText(event.target.value);
-  }
+    }
+    
+    useEffect(() => {
+      setZipObj({zip: text})
+      
+  }, [text])
 
   function handleSearch(){
-      setText('');
-      setIsAnimated(true);
+    axios.post('http://localhost/booking-system/retrieve.php', zipObj, 
+    {headers: {'Content-Type': 'application/json'}})
+    
+    .then(setIsAnimated(true))
+    .then(response => {
+      console.log(response.data);
+    })
+    .then(setText(''))
+    .catch(error => console.log(error));
   }
 
   return (
     <> 
       <Header />
-      <main>
+      <section>
         <motion.div id='container-location'
           animate={{x: isAnimated && 350, y: isAnimated && -60, width: isAnimated && '30%'}}
         >
@@ -32,6 +47,11 @@ function Main() {
           </div>        
 
         </motion.div>
+      </section>
+      <main>
+
+
+
       </main>
       
     </>
