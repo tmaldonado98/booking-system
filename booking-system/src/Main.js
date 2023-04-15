@@ -22,15 +22,22 @@ function Main() {
   }, [text])
 
   function handleSearch(){
-    axios.post('http://localhost/booking-system/retrieve.php', zipObj, 
+    axios.post('http://localhost/booking-system/retrieve.php', text, 
     {headers: {'Content-Type': 'application/json'}})
     
     .then(setIsAnimated(true))
     .then(response => {
       console.log(response.data);
     })
-    .then(setText(''))
+    // .then(setText(''))
     .catch(error => console.log(error));
+
+  }
+
+  function detectEnter(e){
+    if (e.keyCode === 13) {
+      handleSearch();
+    }
   }
 
   return (
@@ -42,7 +49,7 @@ function Main() {
         >
           <div id='location-comp'>   
             <Text size='lg'>Where would you like to see a movie?</Text>
-            <Input onChange={handleChange} value={text} size='md' htmlSize={20} width='auto' variant='flushed' placeholder='ZIP Code or City Name'></Input>  
+            <Input onChange={handleChange} onKeyDown={(e) => detectEnter(e)} value={text} size='md' htmlSize={20} width='auto' variant='flushed' placeholder='ZIP Code or City Name'></Input>  
             <Button onClick={handleSearch} variant='solid'>Search</Button>
           </div>        
 
