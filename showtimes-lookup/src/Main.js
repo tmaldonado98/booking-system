@@ -39,6 +39,7 @@ function Main() {
 
     function handleChange(event){
       setText(event.target.value);
+
     }
     
     
@@ -81,6 +82,9 @@ function Main() {
     if (e.keyCode === 13) {
       handleSearch();
     }
+    setTimeout(() =>{
+      handleSearch()
+    }, 2500)
   }
 
   useEffect(() => {

@@ -9,3 +9,9 @@
     margin-top: 1rem;
     margin-bottom: 0;
 }
+
+#salary-info h4 {
+    width: 100%;
+    text-align: center;
+    font-weight: 700;
+}

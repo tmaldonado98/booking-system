@@ -2,6 +2,12 @@ import { Heading, Text, Input, Button } from '@chakra-ui/react';
 import { Progress } from 'reactstrap';
 import { Helmet } from 'react-helmet';
 import axios from 'axios';
+import {
+    UncontrolledAccordion,
+    AccordionBody,
+    AccordionHeader,
+    AccordionItem,
+  } from 'reactstrap';
 
 import { useEffect, useState } from 'react';
 
@@ -12,7 +18,7 @@ export default function Stats(props) {
     const [scores, setScores] = useState(null);
     const [show, setShow] = useState(false);
     const [imgUrl, setImgUrl] = useState('');
-    // console.log(props.data['_links']['city:urban_area']['href'])
+    const [salaryInfo, setSalaryInfo] = useState(null);
 
     function setScoreFromSlug(){
         console.log(slug)
@@ -52,6 +58,12 @@ export default function Stats(props) {
             {headers: {'Content-Type': 'application/json'}})
             .then(response => {
                 setImgUrl(response.data)
+            });
+
+            axios.get(`${slug._links['ua:salaries']['href']}`,
+            {headers: {'Content-Type': 'application/json'}})
+            .then(response => {
+                setSalaryInfo(response.data)
             });
             }
           }
@@ -98,15 +110,31 @@ export default function Stats(props) {
                             )
                         })                       
                 }
-                {/* {slug && 
-                <div id='widget'>
-                    <a className="teleport-widget-link" href={`https://teleport.org/cities/${slug.slug}/`}>Cost of living - {slug.name}</a>
-                    <Helmet>
-                        <script async class="teleport-widget-script" data-url={`https://teleport.org/cities/${slug.slug}/widget/costs/?currency=USD`} data-max-width="770" data-height="955" src="https://teleport.org/assets/firefly/widget-snippet.min.js"></script>
-                    </Helmet>
-                </div>
-                } */}
+
             </div>
+
+            <section id='salary-info'>
+                <UncontrolledAccordion stayOpen>
+                    <AccordionItem>
+                        <AccordionHeader targetId='1'><h4>Salaries Per Profession</h4></AccordionHeader>
+                        <AccordionBody accordionId="1">
+                            <Heading as='h2'>Salaries</Heading>
+                            <p>data here....................</p>
+                            {console.log(salaryInfo)}
+                        </AccordionBody>
+                    </AccordionItem>
+
+                    <AccordionItem>
+                        <AccordionHeader targetId='2'><h4>Cost Of Living</h4></AccordionHeader>
+                        <AccordionBody accordionId="2">
+                            <Heading as='h2'>Cost Of Living</Heading>
+                            <p>data here....................</p>
+                            {console.log(salaryInfo)}
+                        </AccordionBody>
+                    </AccordionItem>
+                </UncontrolledAccordion>
+            </section>
+
         </>
     );
 }
