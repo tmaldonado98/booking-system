@@ -5,6 +5,7 @@
     column-gap: 3rem;
 }
 
-.individual-divs {
-    
+.individual-divs p {
+    margin-top: 1rem;
+    margin-bottom: 0;
 }
