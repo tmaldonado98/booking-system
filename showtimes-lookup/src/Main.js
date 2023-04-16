@@ -3,6 +3,7 @@ import './Main.css';
 import Header from './Header';
 import ApiCards from './ApiCards';
 import MyContext from './Context';
+import Stats from './Stats';
 
 import { Location } from './Location';
 import { Heading, Text, Input, Button } from '@chakra-ui/react';
@@ -17,6 +18,9 @@ function Main() {
   const [embeddedResults, setEmbeddedResults] = useState('');
   const [stockData, setStockData] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState(false);
+  const [placeData, setPlaceData] = useState('');
+  const [selectedGeo, setSelectedGeo] = useState('');
+
   
   useEffect(() => {
     // () =>{
@@ -51,6 +55,7 @@ function Main() {
     .catch(error => console.log(error));
 
   }
+  
 
   useEffect(() => {
     console.log(cityData);
@@ -78,8 +83,13 @@ function Main() {
     }
   }
 
+  useEffect(() => {
+    console.log(selectedGeo)
+  }, [selectedGeo])
+
+
   return (
-    <MyContext.Provider value={[ selectedPlace, setSelectedPlace ]}>
+    <MyContext.Provider value={[ {selectedPlace, setSelectedPlace}, { selectedGeo, setSelectedGeo} ]}>
     <> 
       <Header />
       <section>
@@ -98,11 +108,12 @@ function Main() {
 
         {selectedPlace === false &&
         <div id='search-results'>
-          {embeddedResults && embeddedResults.map(each => <ApiCards cardData={each.matching_full_name} />)}
+          {embeddedResults && embeddedResults.map(each => <ApiCards cardData={each.matching_full_name} fullData={each}/>)}
         </div>}
 
         {selectedPlace === true && 
         <div id='selected-place'>
+          {selectedGeo !== '' && <Stats data={selectedGeo} />}
           <p>hi</p>
         </div>}
       </section>
