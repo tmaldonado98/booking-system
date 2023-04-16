@@ -114,7 +114,6 @@ function Main() {
         {selectedPlace === true && 
         <div id='selected-place'>
           {selectedGeo !== '' && <Stats data={selectedGeo} />}
-          <p>hi</p>
         </div>}
       </section>
 

@@ -2,6 +2,8 @@ import { Heading, Text, Input, Button } from '@chakra-ui/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
+import './stats.css';
+
 export default function Stats(props) {
     const [slug, setSlug] = useState(null);
     const [scores, setScores] = useState(null);
@@ -32,8 +34,25 @@ export default function Stats(props) {
     useEffect(() => {
         if (slug !== null) {
             setScoreFromSlug();
+            increase();
           }
     }, [slug])
+
+//// bars animation JS
+function increase() {
+    // Change the variable to modify the speed of the number increasing from 0 to (ms)
+    let SPEED = 40;
+    // Retrieve the percentage value
+    let limit = parseInt(document.getElementsByTagName("span").innerHTML, 10);
+
+    for(let i = 0; i <= limit; i++) {
+        setTimeout(function () {
+           document.getElementsByClassName("number").innerHTML = i + "%";
+        }, SPEED * i);
+    }
+}
+
+
 
     return (
         <>
@@ -42,16 +61,21 @@ export default function Stats(props) {
                 {/* <h4>Population: {(props.data.population).toLocaleString('us')}</h4> */}
 
                 {scores !== null &&
-                    
                         scores['categories'].map(each => {
-                            return <p>{each.name}, {each.score_out_of_10}</p>
+                            // {console.log(Object.keys(document.getElementsByClassName("number")))}                
+                            // {increase()}
+                            return (
+                            <div>
+                                <p>{each.name}, </p>
+                                    <div style={{anim}} className="bar"></div>
+                                    {/* <!-- Change the value below --> */}
+                                    <span className='number'>{(Number(each.score_out_of_10) * 10).toFixed(1)}%</span>
+                            </div>
+                            )
                         })
                         
                     
                 }
-                <div className="bar"></div>
-                {/* <!-- Change the value below --> */}
-                <span id="value1">68</span>
             </div>
         </>
     );
