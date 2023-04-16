@@ -1,0 +1,6 @@
+#header-section {
+    display: flex;
+    padding: 32px;
+    justify-content: space-evenly;
+    width: 60%;
+}
