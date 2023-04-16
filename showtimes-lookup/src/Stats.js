@@ -60,9 +60,10 @@ function increase() {
 
     return (
         <>
+            <Heading style={{textAlign: 'center'}} as='h4'>{props.data.full_name}</Heading>
             <div className="chart">
-                <Heading as='h4'>{props.data.full_name}</Heading>
                 {/* <h4>Population: {(props.data.population).toLocaleString('us')}</h4> */}
+                <div style={{opacity: 0}}><p>0</p><span>00</span><Progress value={0}/></div>
 
                 {scores !== null &&
                         scores['categories'].map(each => {
@@ -80,7 +81,7 @@ function increase() {
                             const low = barWidth <= 30 && 'warning';
 
                               return (
-                                  <div>
+                            <div className='individual-divs'>
                                 <p style={{fontWeight: 'bold'}}>{each.name} </p>
                                     {/* <!-- Change the value below --> */}
                                     <span className='number'>{(Number(each.score_out_of_10) * 10).toFixed(1)}%</span>

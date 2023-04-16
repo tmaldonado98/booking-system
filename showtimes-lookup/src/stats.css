@@ -1,0 +1,10 @@
+.chart {
+    /* display: flex;
+    flex-direction: column; */
+    column-count: 2;
+    column-gap: 3rem;
+}
+
+.individual-divs {
+    
+}
