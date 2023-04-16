@@ -1,4 +1,7 @@
 import { Heading, Text, Input, Button } from '@chakra-ui/react';
+// import { css } from '@emotion/react'
+import { Progress } from 'reactstrap';
+
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -49,6 +52,7 @@ function increase() {
         setTimeout(function () {
            document.getElementsByClassName("number").innerHTML = i + "%";
         }, SPEED * i);
+
     }
 }
 
@@ -62,14 +66,31 @@ function increase() {
 
                 {scores !== null &&
                         scores['categories'].map(each => {
-                            // {console.log(Object.keys(document.getElementsByClassName("number")))}                
-                            // {increase()}
-                            return (
-                            <div>
-                                <p>{each.name}, </p>
-                                    <div style={{anim}} className="bar"></div>
+                            const barWidth = (Number(each.score_out_of_10) * 10).toFixed(0);
+                            
+                            let level = '';
+                            if(barWidth <= 30){
+                                level = 'danger';
+                            } else if(barWidth > 30 && barWidth < 65){
+                                level = 'warning'
+                            } else if(barWidth >= 65){
+                                level = 'success';
+                            }
+
+                            const low = barWidth <= 30 && 'warning';
+
+                              return (
+                                  <div>
+                                <p style={{fontWeight: 'bold'}}>{each.name} </p>
                                     {/* <!-- Change the value below --> */}
                                     <span className='number'>{(Number(each.score_out_of_10) * 10).toFixed(1)}%</span>
+                                    {/* <div css={css`@keyframes load {0% {width: 0;} 100% {width: ${barWidth}%}}`} className="bar"></div> */}
+                                    <Progress
+                                        animated
+                                        color={level}
+                                        striped
+                                        value={barWidth}
+                                        />
                             </div>
                             )
                         })

@@ -11,3 +11,7 @@
   flex-direction: row;
   flex-wrap: wrap;
 }
+
+#selected-place {
+  padding: 16px 52px;
+}
