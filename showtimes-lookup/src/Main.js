@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import './Main.css';
 import Header from './Header';
+import ApiCards from './ApiCards';
+import MyContext from './Context';
+
 import { Location } from './Location';
-import { Text, Input, Button } from '@chakra-ui/react';
+import { Heading, Text, Input, Button } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import axios from 'axios';
@@ -12,14 +15,31 @@ function Main() {
   const [text, setText] = useState('');
   const [cityData, setCityData] = useState('');
   const [embeddedResults, setEmbeddedResults] = useState('');
+  const [stockData, setStockData] = useState(null);
+  const [selectedPlace, setSelectedPlace] = useState(false);
   
-  function handleChange(event){
+  useEffect(() => {
+    // () =>{
+      axios.get(`https://api.teleport.org/api/cities/?search=${text}`,
+      {headers: {'Content-Type': 'application/json'}})
+      .then(response => {
+        setStockData(response.data._embedded["city:search-results"])
+      })
+      .catch(error => console.log(error));
+    // }
+  }, [])
+
+    useEffect(() => {
+      console.log(stockData)
+    }, [stockData])
+
+    function handleChange(event){
       setText(event.target.value);
     }
     
+    
 
   function handleSearch(){
-    // axios.post('http://localhost/cities-lookup/retrieve.php', text, 
     axios.get(`https://api.teleport.org/api/cities/?search=${text}`, 
     {headers: {'Content-Type': 'application/json'}})
     
@@ -28,12 +48,7 @@ function Main() {
       setCityData(response.data)
       setEmbeddedResults(response.data._embedded["city:search-results"]);
     })
-    // .then(response => )
-    // .then()
     .catch(error => console.log(error));
-    // .then(response => {
-    //   console.log(response.data);
-    // })
 
   }
 
@@ -43,12 +58,20 @@ function Main() {
 
   }, [cityData])
   
+
   function capitalizeFirstLetter(str) {
-    setText(str.charAt(0).toUpperCase() + str.slice(1));
+    const words = str.split(" ");
+
+    const capitalizedWords = words.map(word =>
+      word.charAt(0).toUpperCase() + word.slice(1)
+    );
+
+  // Join the capitalized words back into a string
+  setText(capitalizedWords.join(" "));
   }
 
-  function detectEnter(e){
-    
+
+  function detectEnter(e){  
     capitalizeFirstLetter(e.target.value);
     if (e.keyCode === 13) {
       handleSearch();
@@ -56,6 +79,7 @@ function Main() {
   }
 
   return (
+    <MyContext.Provider value={[ selectedPlace, setSelectedPlace ]}>
     <> 
       <Header />
       <section>
@@ -65,16 +89,27 @@ function Main() {
         >
           <div id='location-comp'>   
             <Text size='lg'>Show me information for:</Text>
-            <Input onChange={handleChange} onKeyDown={(e) => detectEnter(e)} value={text} size='md' htmlSize={20} width='auto' variant='flushed' placeholder='ZIP Code or City Name'></Input>  
+            <Input onChange={handleChange} onKeyDown={(e) => detectEnter(e)} value={text} size='md' htmlSize={20} width='auto' variant='flushed' placeholder='e.g. Los Angeles, United States'></Input>  
             {/*  style={{textTransform: "uppercase"}} */}
             <Button onClick={handleSearch} variant='solid'>Search</Button>
           </div>        
 
         </motion.div>
 
+        {selectedPlace === false &&
         <div id='search-results'>
-          <p>{embeddedResults.map(each => each.matching_full_name)}</p>
-        </div>
+          {embeddedResults && embeddedResults.map(each => <ApiCards cardData={each.matching_full_name} />)}
+        </div>}
+
+        {selectedPlace === true && 
+        <div id='selected-place'>
+          <p>hi</p>
+        </div>}
+      </section>
+
+      <section>
+        <Heading as='h2' size='md'>Some Cities You Might Like...</Heading>
+        <p>{stockData ? stockData.map(each => each.matching_full_name) : ''}</p>
       </section>
       <main>
 
@@ -83,6 +118,7 @@ function Main() {
       </main>
       
     </>
+    </MyContext.Provider>
   );
 }
 

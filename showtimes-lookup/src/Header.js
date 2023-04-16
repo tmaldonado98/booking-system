@@ -9,7 +9,7 @@ export default function Header (){
         <section id="header-section"> 
             <nav>
                 <Heading as='h1' size='xl'>
-                    Life In Other Cities
+                    City Lookup
                 </Heading>
                 <Heading as='h2' size='md'>
                     Ever wondered what it would be like to live in other cities? <br/>
