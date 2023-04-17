@@ -17,3 +17,8 @@
   width: 85%;
   margin: auto;
 }
+
+#location-comp {
+  display: flex;
+  flex-direction: column;
+}

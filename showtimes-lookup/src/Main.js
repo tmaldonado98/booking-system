@@ -1,24 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import './Main.css';
 import Header from './Header';
 import ApiCards from './ApiCards';
 import MyContext from './Context';
 import Stats from './Stats';
 
-import { Location } from './Location';
 import { Heading, Text, Input, Button } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import axios from 'axios';
 
 function Main() {
+  const [loggedIn, setLoggedIn] = useState(false); ///context
   const [isAnimated, setIsAnimated] = useState(false)
   const [text, setText] = useState('');
   const [cityData, setCityData] = useState('');
   const [embeddedResults, setEmbeddedResults] = useState('');
   const [stockData, setStockData] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState(false);
-  const [placeData, setPlaceData] = useState('');
+  // const [placeData, setPlaceData] = useState('');
   const [selectedGeo, setSelectedGeo] = useState('');
 
   
@@ -79,12 +79,9 @@ function Main() {
 
   function detectEnter(e){  
     capitalizeFirstLetter(e.target.value);
-    if (e.keyCode === 13) {
+    if (e.keyCode === 13 || e.keyCode === 32) {
       handleSearch();
     }
-    setTimeout(() =>{
-      handleSearch()
-    }, 2500)
   }
 
   useEffect(() => {
@@ -93,7 +90,7 @@ function Main() {
 
 
   return (
-    <MyContext.Provider value={[ {selectedPlace, setSelectedPlace}, { selectedGeo, setSelectedGeo} ]}>
+    <MyContext.Provider value={[ {selectedPlace, setSelectedPlace}, { selectedGeo, setSelectedGeo}, {loggedIn, setLoggedIn} ]}>
     <> 
       <Header />
       <section>

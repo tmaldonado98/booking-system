@@ -1,7 +1,8 @@
 import { Heading, Text, Input, Button } from '@chakra-ui/react';
-import { Progress } from 'reactstrap';
-import { Helmet } from 'react-helmet';
+import { Alert, Progress } from 'reactstrap';
+// import { Helmet } from 'react-helmet';
 import axios from 'axios';
+import {FaRegBookmark, FaBookmark} from 'react-icons/fa';
 import {
     UncontrolledAccordion,
     AccordionBody,
@@ -9,7 +10,8 @@ import {
     AccordionItem,
   } from 'reactstrap';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import MyContext from './Context';
 
 import './stats.css';
 
@@ -19,6 +21,8 @@ export default function Stats(props) {
     const [show, setShow] = useState(false);
     const [imgUrl, setImgUrl] = useState('');
     const [salaryInfo, setSalaryInfo] = useState(null);
+    const [saved, setSaved] = useState(false); //for bookmark status
+    const [loggedIn, setLoggedIn] = useContext(MyContext); ///authenticated status context
 
     function setScoreFromSlug(){
         console.log(slug)
@@ -42,8 +46,6 @@ export default function Stats(props) {
         .catch(error => console.log(error))
         }
         
-        document.cookie = "SameSite=None; Secure";
-
     }, [])
 
     useEffect(() => {
@@ -69,13 +71,48 @@ export default function Stats(props) {
           }
     }, [slug])
 
+    ///alert state
+    const [visible, setVisible] = useState(false);
+
+    const onDismiss = () => setVisible(false);
+
+    function setShowUnauth() {
+        setVisible(true);
+        setTimeout(() => {
+            // document.getElementById('unauth-msg').style('display, block');
+            setVisible(false)
+        }, 6000)
+    }
+
+    function handleSaveUnauth() {
+        // setShowUnauth();
+        console.log(loggedIn)
+        if (loggedIn === false) {
+            setShowUnauth();
+        } else if (loggedIn === true){
+            setSaved(!saved);
+        }
+
+    }
+
+    function handleUnsave(){
+        //// axios.post
+    }
 
     return (
         <>
+            <Alert color="info" isOpen={visible} toggle={onDismiss}>
+                You need to be logged into your account in order to save places to your list.
+            </Alert>
+        <div id='heading-w-bookmark'>
             <Heading style={{textAlign: 'center'}} as='h4'>{props.data.full_name}</Heading>
+            {saved === false ? <div className='bookmarked'><FaRegBookmark style={{cursor: 'pointer'}} onClick={handleSaveUnauth}/></div> : <div className='bookmarked'><FaBookmark style={{cursor: 'pointer'}} onClick={handleUnsave}/><span>Saved To Your List!</span></div>}
+        {/* change event for second bookmark case */}
+        </div>
             <div id='img-w-summary'>
                 {imgUrl && <img src={imgUrl.photos[0].image.web} />}
-                {scores && <p dangerouslySetInnerHTML={{ __html: scores.summary}} id='summary'></p>}            </div>
+                {scores && <p dangerouslySetInnerHTML={{ __html: scores.summary}} id='summary'></p>}            
+            </div>
             
             <div className="chart">
                 {/* <h4>Population: {(props.data.population).toLocaleString('us')}</h4> */}
@@ -94,9 +131,7 @@ export default function Stats(props) {
                                 level = 'success';
                             }
 
-                            const low = barWidth <= 30 && 'warning';
-
-                              return (
+                            return (
                             <div className='individual-divs'>
                                 <p style={{fontWeight: 'bold'}}>{each.name} - <span className='number'>{(Number(each.score_out_of_10) * 10).toFixed(1)}%</span></p>
                                     

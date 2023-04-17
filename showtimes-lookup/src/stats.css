@@ -1,3 +1,20 @@
+#heading-w-bookmark{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.bookmarked{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#unauth-msg {
+    display: none;
+}
+
 .chart {
     /* display: flex;
     flex-direction: column; */
