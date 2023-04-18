@@ -1,0 +1,34 @@
+#heading-w-bookmark{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.bookmarked{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#unauth-msg {
+    display: none;
+}
+
+.chart {
+    /* display: flex;
+    flex-direction: column; */
+    column-count: 2;
+    column-gap: 3rem;
+}
+
+.individual-divs p {
+    margin-top: 1rem;
+    margin-bottom: 0;
+}
+
+#salary-info h4 {
+    width: 100%;
+    text-align: center;
+    font-weight: 700;
+}

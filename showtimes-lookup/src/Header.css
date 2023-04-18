@@ -1,0 +1,20 @@
+#nav {
+    background: #252525;
+    padding: 12px;
+}
+
+#nav-buttons{
+    width: fit-content;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 24px;
+    padding: 6px 16px;
+}
+
+#header-section {
+    display: flex;
+    padding: 32px;
+    justify-content: space-evenly;
+    width: 60%;
+}
+

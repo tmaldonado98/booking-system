@@ -1,0 +1,24 @@
+#container-location {
+  width: 50%;
+  margin: auto;
+}
+
+#search-results {
+  display: flex;
+  gap: 50px;
+  align-content: center;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+#selected-place {
+  padding: 0 52px;
+  width: 85%;
+  margin: auto;
+}
+
+#location-comp {
+  display: flex;
+  flex-direction: column;
+}
