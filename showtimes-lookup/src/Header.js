@@ -27,8 +27,12 @@ export default function Header (){
     const [modalOption, setModalOption] = useState(true);
 
     ///form state
-    const [emailValue, setEmailValue] = useState('');
-    const [passwordValue, setPasswordValue] = useState('');
+    const [emailLogValue, setEmailLogValue] = useState('');
+    const [passwordLogValue, setPasswordLogValue] = useState('');
+
+    const [emailRegValue, setPasswordRegValue] = useState('');
+    const [passwordRegValue, setEmailRegValue] = useState('');
+
     const [valid, setValid] = useState(null);
     const [invalid, setInvalid] = useState(null);
     const [pswValid, setPswValid] = useState(null);
@@ -37,17 +41,12 @@ export default function Header (){
     const [registrationPosted, setRegistrationPosted] = useState(null);
     const [currentAccount, setCurrentAccount] = useState(null); ///change later to useCOntext
 
-    function handleSignIn(){
-        // axios.post
-        toggle();
-    }
-
-
     
+
     //email regex pattern
     const emailRegex = /^([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
     
-    const handleEmail = (event) => {
+    const handleRegEmail = (event) => {
       const inputValue = event.target.value;
       const inputType = event.target.type;
   
@@ -60,19 +59,19 @@ export default function Header (){
             setValid(false);
         }
         
-        setEmailValue(inputValue);
+        setEmailRegValue(inputValue);
     };
 
-    function handlePassword(event){
-        setPasswordValue(event.target.value);
+    function handleRegPassword(event){
+        setPasswordRegValue(event.target.value);
     }
 
     // useEffect(() => {
     //     console.log(passwordValue)
     // }, [passwordValue])
 
-    function checkMatching (event){
-        if (event.target.value === passwordValue) {
+    function checkMatchingReg (event){
+        if (event.target.value === passwordRegValue) {
             setPswValid(true);
             setPswInvalid(false);
         } else {
@@ -81,13 +80,20 @@ export default function Header (){
         }
     }
     async function handleRegistration(){
-        if (emailRegex.test(emailValue) === true && pswValid === true) {
-            await axios.post('http://localhost/booking-system/createAcct.php', {emailValue: emailValue, passwordValue: passwordValue},  
+        if (emailRegex.test(emailRegValue) === true && pswValid === true) {
+            await axios.post('http://localhost/booking-system/createAcct.php', {emailValue: emailRegValue, passwordValue: passwordRegValue},  
             {headers: {'Content-Type': 'application/json'}})
-            // .then(response => logIn(response.data))
-            .then(response => console.log(response.data))
+            .then(response => {
+                setCurrentAccount(JSON.parse(response.data))
+                console.log(response.data)
+            })
             .then(setRegistrationPosted(true))
+            .then(setEmailRegValue(''))
+            .then(setPasswordRegValue(''))
             .catch(error => console.log(error))
+
+            setPswInvalid(null);
+            setPswValid(null);
         } else {
             console.log('Account not created');
             return false;
@@ -97,16 +103,41 @@ export default function Header (){
     useEffect(() => {
         if (registrationPosted !== null) {
             toggle();
-            // logIn();
+            console.log('Logging in...');
+            handleSignIn(currentAccount.email, currentAccount.password);
             
         }
     }, [registrationPosted])
 
-    async function logIn (){
-        await axios.get('http://localhost/booking-system/logIn.php',  
+    const handleLogEmail = (event) => {
+        const inputValue = event.target.value;
+        const inputType = event.target.type;
+    
+        // Check if the input value matches the input type
+          if (emailRegex.test(inputValue)) {
+              setValid(true);
+              setInvalid(false);
+          } else {
+              setInvalid(true);
+              setValid(false);
+          }
+          
+          setEmailLogValue(inputValue);
+      };
+  
+    // function handleLogPassword(event)
+    //   setPasswordLogValue(event.target.value);
+    // }
+
+    async function handleSignIn (email, password){   ////POST user credentials to logIn.php .. Script checks if credentials are valid. If so, returns json object
+        await axios.post('http://localhost/booking-system/logIn.php', {email: email, password: password},  
         {headers: {'Content-Type': 'application/json'}})
-        .then(response => setCurrentAccount(response.data))
+        .then(response => console.log(response.data))
+        .then(setCurrentAccount(null))
+        .then(setEmailLogValue(''))
+        .then(setPasswordLogValue(''))
         .catch(error => console.log(error))
+
     }
 
     useEffect(() => {
@@ -150,8 +181,8 @@ export default function Header (){
                   <Input
                     bsSize="lg"
                     type="email"
-                    value={emailValue}
-                    onChange={handleEmail}
+                    value={emailLogValue}
+                    onChange={handleLogEmail}
                     valid={valid}
                     invalid={invalid}
                     />
@@ -160,6 +191,8 @@ export default function Header (){
                     <Input
                         bsSize="lg"
                         type="password"
+                        value={passwordLogValue}
+                        onChange={(event) => setPasswordLogValue(event.target.value)}
                     />
                 </ModalBody>
                 }
@@ -169,8 +202,8 @@ export default function Header (){
                   <Input
                     bsSize="lg"
                     type="email"
-                    value={emailValue}
-                    onChange={handleEmail}
+                    value={emailRegValue}
+                    onChange={handleRegEmail}
                     valid={valid}
                     invalid={invalid}
                     />
@@ -178,13 +211,14 @@ export default function Header (){
                     <h4>Create A Password</h4>
                     <Input
                         bsSize="lg"
-                        onChange={handlePassword}
+                        value={passwordRegValue}
+                        onChange={handleRegPassword}
                         type="password"
                     />
                     <h4>Confirm Your Password</h4>
                     <Input
                         bsSize="lg"
-                        onChange={checkMatching}
+                        onChange={checkMatchingReg}
                         type="password"
                         valid={pswValid}
                         invalid={pswInvalid}
@@ -193,7 +227,7 @@ export default function Header (){
                 }
                 <ModalFooter style={{justifyContent: 'center'}}>
                     {rSelected === 1 &&
-                    <Button color="primary" onClick={handleSignIn}>
+                    <Button color="primary" onClick={() => handleSignIn(emailLogValue, passwordLogValue)}>
                         Log In
                     </Button>
                     }
