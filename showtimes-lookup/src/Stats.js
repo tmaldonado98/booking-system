@@ -49,7 +49,7 @@ export default function Stats(props) {
     }, [])
 
     useEffect(() => {
-        ///This ensure that score is set only after slug has been set. 
+        ///This ensures that score is set only after slug has been set. 
         ///If I use .then, or even useEffect, they do not wait until axios response.
         if (slug !== null) {
             setScoreFromSlug();
@@ -85,13 +85,13 @@ export default function Stats(props) {
     }
 
     function handleSaveUnauth() {
-        // setShowUnauth();
+        setShowUnauth();
         console.log(loggedIn)
-        if (loggedIn === false) {
-            setShowUnauth();
-        } else if (loggedIn === true){
-            setSaved(!saved);
-        }
+        // if (loggedIn === false) {
+        //     setShowUnauth();
+        // } else if (loggedIn === true){
+        //     setSaved(!saved);
+        // }
 
     }
 

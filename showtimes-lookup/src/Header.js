@@ -2,7 +2,8 @@ import './Header.css';
 import { Heading } from '@chakra-ui/react'
 import { Button, ButtonGroup, Modal, ModalHeader, ModalBody, ModalFooter, Input } from 'reactstrap';
 import { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
+// import styled from '@emotion/styled';
+import axios from 'axios';
 
 export default function Header (){
     ///Modal state
@@ -25,30 +26,32 @@ export default function Header (){
 
     const [modalOption, setModalOption] = useState(true);
 
+    ///form state
+    const [emailValue, setEmailValue] = useState('');
+    const [passwordValue, setPasswordValue] = useState('');
+    const [valid, setValid] = useState(null);
+    const [invalid, setInvalid] = useState(null);
+    const [pswValid, setPswValid] = useState(null);
+    const [pswInvalid, setPswInvalid] = useState(null);
+
+    const [registrationPosted, setRegistrationPosted] = useState(null);
+    const [currentAccount, setCurrentAccount] = useState(null); ///change later to useCOntext
+
     function handleSignIn(){
         // axios.post
         toggle();
     }
 
-    function handleRegistration(){
-        // axios.post
-        toggle();
-    }
 
-    ///email form
-    const [value, setValue] = useState('');
-    const [valid, setValid] = useState(null);
-    const [invalid, setInvalid] = useState(null);
-  
-    //email regex
+    
+    //email regex pattern
     const emailRegex = /^([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
-
+    
     const handleEmail = (event) => {
       const inputValue = event.target.value;
       const inputType = event.target.type;
   
       // Check if the input value matches the input type
-    //   const isValidInput = inputValue.match(new RegExp(inputType, 'i'));
         if (emailRegex.test(inputValue)) {
             setValid(true);
             setInvalid(false);
@@ -56,10 +59,62 @@ export default function Header (){
             setInvalid(true);
             setValid(false);
         }
-
-      setValue(inputValue);
+        
+        setEmailValue(inputValue);
     };
 
+    function handlePassword(event){
+        setPasswordValue(event.target.value);
+    }
+
+    // useEffect(() => {
+    //     console.log(passwordValue)
+    // }, [passwordValue])
+
+    function checkMatching (event){
+        if (event.target.value === passwordValue) {
+            setPswValid(true);
+            setPswInvalid(false);
+        } else {
+            setPswValid(false);
+            setPswInvalid(true);
+        }
+    }
+    async function handleRegistration(){
+        if (emailRegex.test(emailValue) === true && pswValid === true) {
+            await axios.post('http://localhost/booking-system/createAcct.php', {emailValue: emailValue, passwordValue: passwordValue},  
+            {headers: {'Content-Type': 'application/json'}})
+            // .then(response => logIn(response.data))
+            .then(response => console.log(response.data))
+            .then(setRegistrationPosted(true))
+            .catch(error => console.log(error))
+        } else {
+            console.log('Account not created');
+            return false;
+        }
+
+    }
+    useEffect(() => {
+        if (registrationPosted !== null) {
+            toggle();
+            // logIn();
+            
+        }
+    }, [registrationPosted])
+
+    async function logIn (){
+        await axios.get('http://localhost/booking-system/logIn.php',  
+        {headers: {'Content-Type': 'application/json'}})
+        .then(response => setCurrentAccount(response.data))
+        .catch(error => console.log(error))
+    }
+
+    useEffect(() => {
+        if (currentAccount !== null) {
+            console.log(currentAccount)
+            
+        }
+    }, [currentAccount])
 
     return(
     <>
@@ -95,7 +150,7 @@ export default function Header (){
                   <Input
                     bsSize="lg"
                     type="email"
-                    value={value}
+                    value={emailValue}
                     onChange={handleEmail}
                     valid={valid}
                     invalid={invalid}
@@ -114,7 +169,7 @@ export default function Header (){
                   <Input
                     bsSize="lg"
                     type="email"
-                    value={value}
+                    value={emailValue}
                     onChange={handleEmail}
                     valid={valid}
                     invalid={invalid}
@@ -123,12 +178,16 @@ export default function Header (){
                     <h4>Create A Password</h4>
                     <Input
                         bsSize="lg"
+                        onChange={handlePassword}
                         type="password"
                     />
                     <h4>Confirm Your Password</h4>
                     <Input
                         bsSize="lg"
+                        onChange={checkMatching}
                         type="password"
+                        valid={pswValid}
+                        invalid={pswInvalid}
                     />
                 </ModalBody>
                 }
@@ -163,6 +222,10 @@ export default function Header (){
                 {/* <Location /> */}
             </nav>
         </section>
+        <Heading as='h2'>
+
+                *** Page is still under construction!! ***
+        </Heading>
     </>    
     );
 }

@@ -79,8 +79,9 @@ function Main() {
 
   function detectEnter(e){  
     capitalizeFirstLetter(e.target.value);
-    if (e.keyCode === 13 || e.keyCode === 32) {
+    if (e.keyCode === 13) {
       handleSearch();
+      //  || e.keyCode === 32
     }
   }
 
