@@ -29,14 +29,17 @@ export default function Header (){
     ///form state
     const [emailLogValue, setEmailLogValue] = useState('');
     const [passwordLogValue, setPasswordLogValue] = useState('');
-
-    const [emailRegValue, setPasswordRegValue] = useState('');
-    const [passwordRegValue, setEmailRegValue] = useState('');
-
-    const [valid, setValid] = useState(null);
-    const [invalid, setInvalid] = useState(null);
+    
+    const [emailRegValue, setEmailRegValue] = useState('');
+    const [passwordRegValue, setPasswordRegValue] = useState('');
     const [pswValid, setPswValid] = useState(null);
     const [pswInvalid, setPswInvalid] = useState(null);
+
+    const [regValid, setRegValid] = useState(null);
+    const [regInvalid, setRegInvalid] = useState(null);
+
+    const [logValid, setLogValid] = useState(null);    
+    const [logInvalid, setLogInvalid] = useState(null);
 
     const [registrationPosted, setRegistrationPosted] = useState(null);
     const [currentAccount, setCurrentAccount] = useState(null); ///change later to useCOntext
@@ -47,19 +50,19 @@ export default function Header (){
     const emailRegex = /^([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
     
     const handleRegEmail = (event) => {
-      const inputValue = event.target.value;
+    //   const emailRegValue = event.target.value;
       const inputType = event.target.type;
   
       // Check if the input value matches the input type
-        if (emailRegex.test(inputValue)) {
-            setValid(true);
-            setInvalid(false);
+        if (emailRegex.test(event.target.value)) {
+            setRegValid(true);
+            setRegInvalid(false);
         } else {
-            setInvalid(true);
-            setValid(false);
+            setRegInvalid(true);
+            setRegValid(false);
         }
         
-        setEmailRegValue(inputValue);
+        setEmailRegValue(event.target.value);
     };
 
     function handleRegPassword(event){
@@ -82,18 +85,21 @@ export default function Header (){
     async function handleRegistration(){
         if (emailRegex.test(emailRegValue) === true && pswValid === true) {
             await axios.post('http://localhost/booking-system/createAcct.php', {emailValue: emailRegValue, passwordValue: passwordRegValue},  
-            {headers: {'Content-Type': 'application/json'}})
+            {headers: {'Content-Type':'application/json'}})
             .then(response => {
-                setCurrentAccount(JSON.parse(response.data))
-                console.log(response.data)
+                // const parsedResponse = JSON.parse(response.data);
+                // console.log(parsedResponse);
+                // console.log(response.data)
+                setCurrentAccount(response.data);
             })
             .then(setRegistrationPosted(true))
+            .then(alert('Account created!'))
             .then(setEmailRegValue(''))
             .then(setPasswordRegValue(''))
             .catch(error => console.log(error))
 
-            setPswInvalid(null);
-            setPswValid(null);
+            // setPswInvalid(null);
+            // setPswValid(null);
         } else {
             console.log('Account not created');
             return false;
@@ -104,7 +110,7 @@ export default function Header (){
         if (registrationPosted !== null) {
             toggle();
             console.log('Logging in...');
-            handleSignIn(currentAccount.email, currentAccount.password);
+            // handleSignIn(currentAccount.email, currentAccount.password);
             
         }
     }, [registrationPosted])
@@ -115,11 +121,11 @@ export default function Header (){
     
         // Check if the input value matches the input type
           if (emailRegex.test(inputValue)) {
-              setValid(true);
-              setInvalid(false);
+              setLogValid(true);
+              setLogInvalid(false);
           } else {
-              setInvalid(true);
-              setValid(false);
+              setLogInvalid(true);
+              setLogValid(false);
           }
           
           setEmailLogValue(inputValue);
@@ -143,7 +149,7 @@ export default function Header (){
     useEffect(() => {
         if (currentAccount !== null) {
             console.log(currentAccount)
-            
+            handleSignIn(currentAccount.email, currentAccount.password);
         }
     }, [currentAccount])
 
@@ -183,8 +189,8 @@ export default function Header (){
                     type="email"
                     value={emailLogValue}
                     onChange={handleLogEmail}
-                    valid={valid}
-                    invalid={invalid}
+                    valid={logValid}
+                    invalid={logInvalid}
                     />
                     
                     <h4>Password</h4>
@@ -202,17 +208,18 @@ export default function Header (){
                   <Input
                     bsSize="lg"
                     type="email"
-                    value={emailRegValue}
+                    // value={emailRegValue}
                     onChange={handleRegEmail}
-                    valid={valid}
-                    invalid={invalid}
+                    valid={regValid}
+                    invalid={regInvalid}
                     />
                     
                     <h4>Create A Password</h4>
                     <Input
                         bsSize="lg"
-                        value={passwordRegValue}
+                        // value={passwordRegValue}
                         onChange={handleRegPassword}
+                        // onChange={(event) => setPasswordRegValue(event.target.value)}
                         type="password"
                     />
                     <h4>Confirm Your Password</h4>
