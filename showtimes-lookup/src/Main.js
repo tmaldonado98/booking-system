@@ -34,15 +34,13 @@ function Main() {
   }, [])
 
     useEffect(() => {
-      console.log(stockData)
+      console.log(stockData);
     }, [stockData])
 
     function handleChange(event){
       setText(event.target.value);
 
-    }
-    
-    
+    }    
 
   function handleSearch(){
     axios.get(`https://api.teleport.org/api/cities/?search=${text}`, 
@@ -108,20 +106,26 @@ function Main() {
 
         </motion.div>
 
-        {selectedPlace === false &&
+        {selectedPlace === false ?
         <div id='search-results'>
           {embeddedResults && embeddedResults.map(each => <ApiCards cardData={each.matching_full_name} fullData={each}/>)}
-        </div>}
+        </div>
+        :
+        ''
+        }
 
-        {selectedPlace === true && 
+        {/* {selectedPlace === true &&  */}
         <div id='selected-place'>
           {selectedGeo !== '' && <Stats data={selectedGeo} />}
-        </div>}
+        </div>
+        {/* } */}
       </section>
 
-      <section>
-        <Heading as='h2' size='md'>Some Cities You Might Like...</Heading>
-        <p>{stockData ? stockData.map(each => each.matching_full_name) : ''}</p>
+      <section id='stock-container'>
+        <Heading as='h2' size='md' id='stock-header'>Some Cities You Might Like...</Heading>
+        <div id='stock-data'>
+          {stockData ? stockData.map(each => <ApiCards cardData={each.matching_full_name} fullData={each}/>) : ''}
+        </div>
       </section>
       <main>
 

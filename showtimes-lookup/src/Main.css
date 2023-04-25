@@ -22,3 +22,22 @@
   display: flex;
   flex-direction: column;
 }
+
+#stock-container {
+  margin: 50px 0;
+}
+
+#stock-header {
+  text-align: center;
+}
+
+#stock-data{
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: space-evenly;
+  gap: 1rem;
+  width: 90%;
+  margin: auto;
+  margin-top: 42px;
+}

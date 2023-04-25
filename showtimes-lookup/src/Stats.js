@@ -1,5 +1,6 @@
 import { Heading, Text, Input, Button } from '@chakra-ui/react';
 import { Alert, Progress } from 'reactstrap';
+import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react';
 // import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import {FaRegBookmark, FaBookmark} from 'react-icons/fa';
@@ -24,6 +25,9 @@ export default function Stats(props) {
     const [saved, setSaved] = useState(false); //for bookmark status
     const [loggedIn, setLoggedIn] = useContext(MyContext); ///authenticated status context
 
+
+    const [{ selectedPlace, setSelectedPlace }, { selectedGeo, setSelectedGeo }] = useContext(MyContext);
+
     function setScoreFromSlug(){
         console.log(slug)
         axios.get(`${slug._links['ua:scores'].href}`,
@@ -46,7 +50,7 @@ export default function Stats(props) {
         .catch(error => console.log(error))
         }
         
-    }, [])
+    }, [selectedGeo])
 
     useEffect(() => {
         ///This ensures that score is set only after slug has been set. 
@@ -153,18 +157,43 @@ export default function Stats(props) {
                     <AccordionItem>
                         <AccordionHeader targetId='1'><h4>Salaries Per Profession</h4></AccordionHeader>
                         <AccordionBody accordionId="1">
-                            <Heading as='h2'>Salaries</Heading>
-                            <p>data here....................</p>
+                            {/* <Heading as='h2'>Salaries</Heading> */}
+                            {/* <p>data here....................</p> */}
                             {console.log(salaryInfo)}
+                            {/* <div id='salary-list'> */}
+                                {salaryInfo !== null && salaryInfo.salaries.map((each) => {
+                                    <div key={each.job.id}>
+                                        <p>{each.job.title}</p>
+                                        {/* <Card  key={each.job.id}>
+                                            <CardHeader>
+                                                <Heading>
+                                                    {each.job.title}
+                                                </Heading>
+                                            </CardHeader>
+                                                {(each.salary_percentiles.percentile_50).toFixed(0)}
+                                            {/* <CardBody>
+                                            </CardBody>
+                                        </Card>  */}
+                                    </div>
+                                })
+                                }
+                            {/* </div> */}
                         </AccordionBody>
                     </AccordionItem>
 
                     <AccordionItem>
                         <AccordionHeader targetId='2'><h4>Cost Of Living</h4></AccordionHeader>
                         <AccordionBody accordionId="2">
-                            <Heading as='h2'>Cost Of Living</Heading>
+                            {/* <Heading as='h2'>Cost Of Living</Heading> */}
                             <p>data here....................</p>
-                            {console.log(salaryInfo)}
+                            {/* {console.log(salaryInfo)} */}
+                        </AccordionBody>
+                    </AccordionItem>
+
+                    <AccordionItem>
+                        <AccordionHeader targetId='3'><h4>Some Facts</h4></AccordionHeader>
+                        <AccordionBody accordionId='3'>
+                                <p>fs</p>
                         </AccordionBody>
                     </AccordionItem>
                 </UncontrolledAccordion>
