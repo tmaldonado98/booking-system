@@ -87,13 +87,11 @@ export default function Header (){
             await axios.post('http://localhost/booking-system/createAcct.php', {emailValue: emailRegValue, passwordValue: passwordRegValue},  
             {headers: {'Content-Type':'application/json'}})
             .then(response => {
-                // const parsedResponse = JSON.parse(response.data);
-                // console.log(parsedResponse);
-                // console.log(response.data)
                 setCurrentAccount(response.data);
             })
             .then(setRegistrationPosted(true))
             .then(alert('Account created!'))
+            .then(async () => await handleSignIn(currentAccount.email, currentAccount.password))
             .then(setEmailRegValue(''))
             .then(setPasswordRegValue(''))
             .catch(error => console.log(error))
@@ -120,13 +118,13 @@ export default function Header (){
         const inputType = event.target.type;
     
         // Check if the input value matches the input type
-          if (emailRegex.test(inputValue)) {
-              setLogValid(true);
-              setLogInvalid(false);
-          } else {
-              setLogInvalid(true);
-              setLogValid(false);
-          }
+        //   if (emailRegex.test(inputValue)) {
+        //       setLogValid(true);
+        //       setLogInvalid(false);
+        //   } else {
+        //       setLogInvalid(true);
+        //       setLogValid(false);
+        //   }
           
           setEmailLogValue(inputValue);
       };
@@ -135,22 +133,35 @@ export default function Header (){
     //   setPasswordLogValue(event.target.value);
     // }
 
-    async function handleSignIn (email, password){   ////POST user credentials to logIn.php .. Script checks if credentials are valid. If so, returns json object
-        await axios.post('http://localhost/booking-system/logIn.php', {email: email, password: password},  
-        {headers: {'Content-Type': 'application/json'}})
-        .then(response => console.log(response.data))
-        .then(setCurrentAccount(null))
-        .then(setEmailLogValue(''))
-        .then(setPasswordLogValue(''))
-        .catch(error => console.log(error))
-
+    async function handleSignIn (address, pass){   ////POST user credentials to logIn.php .. Script checks if credentials are valid. If so, returns json object
+        if (emailRegex.test(emailLogValue) === true && passwordLogValue.length > 0) {
+            await axios.post('http://localhost/booking-system/logIn.php', {email: address, password: pass},  
+            {headers: {'Content-Type': 'application/json'}})
+            ///If account does not exist in database, response from php as false; else send object
+            .then(response => {
+                console.log(response.data);
+                setCurrentAccount(response.data);
+            })
+            // .then(setCurrentAccount(null))
+            .then(setEmailLogValue(''))
+            .then(setPasswordLogValue(''))
+            // .then(console.log('Logged in!'))
+            .catch(error => console.log(error))
+        } else {
+            return false; ///later set error validation
+        }
     }
 
     useEffect(() => {
-        if (currentAccount !== null) {
-            console.log(currentAccount)
-            handleSignIn(currentAccount.email, currentAccount.password);
+        if (currentAccount !== null && currentAccount !== false) {
+            console.log(currentAccount);
+            console.log('Logged In!');
+            // handleSignIn(currentAccount.email, currentAccount.password);
         }
+        else if (currentAccount === false){
+            console.log('User account does not exist in our records!')
+        }
+        console.log(currentAccount)
     }, [currentAccount])
 
     return(
@@ -160,6 +171,7 @@ export default function Header (){
                 <Button onClick={toggle}>Log In/Sign Up</Button>
             </div>
         </div>
+        {!currentAccount &&
             <Modal isOpen={modal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>
                     <ButtonGroup>
@@ -189,8 +201,8 @@ export default function Header (){
                     type="email"
                     value={emailLogValue}
                     onChange={handleLogEmail}
-                    valid={logValid}
-                    invalid={logInvalid}
+                    // valid={logValid}
+                    // invalid={logInvalid}
                     />
                     
                     <h4>Password</h4>
@@ -248,6 +260,12 @@ export default function Header (){
                     </Button>
                 </ModalFooter>
             </Modal>
+        }
+        {/* {currentAccount &&
+            ///account dashboard, can be in modal. Show list
+
+
+        } */}
 
         <section id="header-section"> 
             <nav>
