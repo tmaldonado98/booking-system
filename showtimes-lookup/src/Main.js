@@ -20,6 +20,7 @@ function Main() {
   const [selectedPlace, setSelectedPlace] = useState(false);
   // const [placeData, setPlaceData] = useState('');
   const [selectedGeo, setSelectedGeo] = useState('');
+  const [mapCreated, setMapCreated] = useState(false); //context
 
   
   useEffect(() => {
@@ -89,7 +90,7 @@ function Main() {
 
 
   return (
-    <MyContext.Provider value={[ {selectedPlace, setSelectedPlace}, { selectedGeo, setSelectedGeo}, {loggedIn, setLoggedIn} ]}>
+    <MyContext.Provider value={{selectedPlace, setSelectedPlace,  selectedGeo, setSelectedGeo, loggedIn, setLoggedIn, mapCreated, setMapCreated}}>
     <> 
       <Header />
       <section>

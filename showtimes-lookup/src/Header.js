@@ -246,12 +246,16 @@ export default function Header (){
                 }
                 <ModalFooter style={{justifyContent: 'center'}}>
                     {rSelected === 1 &&
-                    <Button color="primary" onClick={() => handleSignIn(emailLogValue, passwordLogValue)}>
+                    <Button color="primary" 
+                    // onClick={() => handleSignIn(emailLogValue, passwordLogValue)}
+                    >
                         Log In
                     </Button>
                     }
                     {rSelected === 2 &&
-                    <Button color="primary" onClick={handleRegistration}>
+                    <Button color="primary" 
+                    // onClick={handleRegistration}
+                    >
                         Create Account
                     </Button>
                     }

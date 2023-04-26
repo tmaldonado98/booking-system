@@ -9,7 +9,7 @@ function ApiCards (props) {
     // const [selectedPlace, setSelectedPlace] = useContext(MyContext);
     // const [placeData, setPlaceData] = useContext(MyContext);
     // const [selectedGeo, setSelectedGeo] = useContext(MyContext)
-    const [{ selectedPlace, setSelectedPlace }, { selectedGeo, setSelectedGeo }] = useContext(MyContext);
+    const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo, mapCreated, setMapCreated} = useContext(MyContext);
 
     function switchToStats () {
         axios.get(`${props.fullData._links['city:item'].href}`,
@@ -19,6 +19,7 @@ function ApiCards (props) {
             // console.log(response.data)
         })
         .then(setSelectedPlace(true))
+        .then(setMapCreated(false))
         .catch(error => console.log(error));
     }
 

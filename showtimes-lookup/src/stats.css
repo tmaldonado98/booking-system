@@ -27,7 +27,11 @@
     margin-bottom: 0;
 }
 
-#salary-info h4 {
+#accordion {
+    margin: 32px 0;
+}
+
+#accordion h4 {
     width: 100%;
     text-align: center;
     font-weight: 700;
@@ -37,4 +41,36 @@ li {
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid black;
+    padding: 7px 0;
+    align-items: center;
+}
+
+.accordion-content {
+    margin: 32px 0;
+}
+
+.accordion-content li p {
+    font-weight: bold;
+    margin: 0;
+}
+
+#map-accordion{
+    height: 55vh;
+}
+
+#map-container {
+    height: 52vh;
+    width: max-content;
+    margin: auto;
+}
+
+.maplibregl-canvas {
+    /* width: 100% !important; */
+    position: relative;
+    margin: auto;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
 }
