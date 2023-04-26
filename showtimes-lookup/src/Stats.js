@@ -22,6 +22,8 @@ export default function Stats(props) {
     const [show, setShow] = useState(false);
     const [imgUrl, setImgUrl] = useState('');
     const [salaryInfo, setSalaryInfo] = useState(null);
+    const [costLiving, setCostLiving] = useState(null);
+
     const [saved, setSaved] = useState(false); //for bookmark status
     const [loggedIn, setLoggedIn] = useContext(MyContext); ///authenticated status context
 
@@ -157,45 +159,94 @@ export default function Stats(props) {
                     <AccordionItem>
                         <AccordionHeader targetId='1'><h4>Salaries Per Profession</h4></AccordionHeader>
                         <AccordionBody accordionId="1">
-                            {/* <Heading as='h2'>Salaries</Heading> */}
+                            <Heading style={{textAlign:'center', marginBottom:'28px'}} as='h2'>Annual Salaries</Heading>
                             {/* <p>data here....................</p> */}
                             {console.log(salaryInfo)}
-                            {/* <div id='salary-list'> */}
-                                {salaryInfo !== null && salaryInfo.salaries.map((each) => {
-                                    <div key={each.job.id}>
-                                        <p>{each.job.title}</p>
-                                        {/* <Card  key={each.job.id}>
-                                            <CardHeader>
-                                                <Heading>
+                            <div id='salary-list'>
+                                <ul>
+                                {salaryInfo !== null && salaryInfo.salaries.map((each) => (
+                                    <li key={each.job.id}>
+                                        {/* <p>{each.job.title}</p> */}
+                                                <h5>
                                                     {each.job.title}
-                                                </Heading>
-                                            </CardHeader>
-                                                {(each.salary_percentiles.percentile_50).toFixed(0)}
-                                            {/* <CardBody>
-                                            </CardBody>
-                                        </Card>  */}
-                                    </div>
-                                })
+                                                </h5>
+                                                <p>
+                                                    USD ${(each.salary_percentiles.percentile_50).toLocaleString('us')}
+                                                </p>
+                                    </li>
+                                ))
                                 }
-                            {/* </div> */}
+                                </ul>
+                            </div>
                         </AccordionBody>
                     </AccordionItem>
 
                     <AccordionItem>
                         <AccordionHeader targetId='2'><h4>Cost Of Living</h4></AccordionHeader>
                         <AccordionBody accordionId="2">
-                            {/* <Heading as='h2'>Cost Of Living</Heading> */}
+                            <Heading style={{textAlign:'center', marginBottom:'28px'}} as='h2'>Monthly Cost Of Living</Heading>
                             <p>data here....................</p>
                             {/* {console.log(salaryInfo)} */}
                         </AccordionBody>
                     </AccordionItem>
 
                     <AccordionItem>
-                        <AccordionHeader targetId='3'><h4>Some Facts</h4></AccordionHeader>
+                        <AccordionHeader targetId='3'><h4>Map</h4></AccordionHeader>
                         <AccordionBody accordionId='3'>
                                 <p>fs</p>
                         </AccordionBody>
                     </AccordionItem>
+
+                    <AccordionItem>
+                        <AccordionHeader targetId='4'><h4>Economy & Population</h4></AccordionHeader>
+                        <AccordionBody accordionId='4'>
+                                <p>fs</p>
+                        </AccordionBody>
+                    </AccordionItem>
+
+                    <AccordionItem>
+                        <AccordionHeader targetId='5'><h4>Education</h4></AccordionHeader>
+                        <AccordionBody accordionId='5'>
+                                <p>fs</p>
+                        </AccordionBody>
+                    </AccordionItem>
+
+                    <AccordionItem>
+                        <AccordionHeader targetId='6'><h4>Culture & Language</h4></AccordionHeader>
+                        <AccordionBody accordionId='6'>
+                                <p>fs</p>
+                        </AccordionBody>
+                    </AccordionItem>
+
+                    <AccordionItem>
+                        <AccordionHeader targetId='7'><h4>Social Tolerance</h4></AccordionHeader>
+                        <AccordionBody accordionId='7'>
+                                <p>fs</p>
+                        </AccordionBody>
+                    </AccordionItem>
+
+                    <AccordionItem>
+                        <AccordionHeader targetId='8'><h4>Leisure, Internet</h4></AccordionHeader>
+                        <AccordionBody accordionId='8'>
+                                <p>fs</p>
+                        </AccordionBody>
+                    </AccordionItem>
+
+                    <AccordionItem>
+                        <AccordionHeader targetId='9'><h4>Weather, Safety, Pollution</h4></AccordionHeader>
+                        <AccordionBody accordionId='9'>
+                                <p>fs</p>
+                        </AccordionBody>
+                    </AccordionItem>
+
+                    <AccordionItem> 
+                        <AccordionHeader targetId='10'><h4>Entrepeneurship, Taxation</h4></AccordionHeader>
+                        <AccordionBody accordionId='10'>
+                                <p>fs</p> 
+                                 {/*  VC, Taxation, Startups  */}
+                        </AccordionBody>
+                    </AccordionItem>
+
                 </UncontrolledAccordion>
             </section>
 

@@ -39,7 +39,7 @@ function Main() {
 
     function handleChange(event){
       setText(event.target.value);
-
+      setSelectedPlace(false);
     }    
 
   function handleSearch(){
