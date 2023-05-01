@@ -22,7 +22,7 @@ export default function Stats(props) {
     const [show, setShow] = useState(false);
     const [imgUrl, setImgUrl] = useState('');
     const [salaryInfo, setSalaryInfo] = useState(null);
-    const [costLiving, setCostLiving] = useState(null);
+    const [slugDetails, setSlugDetails] = useState(null);
     const [geonameId, setGeonameId] = useState(null);
     const [latLon, setLatLon] = useState(null);
 
@@ -88,7 +88,7 @@ export default function Stats(props) {
             axios.get(`${slug._links['ua:details']['href']}`,
             {headers: {'Content-Type': 'application/json'}})
             .then(response => {
-                setCostLiving(response.data)
+                setSlugDetails(response.data)
             });
 
             axios.get(`${slug._links['ua:identifying-city']['href']}`,
@@ -139,7 +139,7 @@ export default function Stats(props) {
         if (activeAccordionId === '3' && mapCreated === false) {
             console.log('hey');
             setMapCreated(true);
-            maptilersdk.config.apiKey = '';
+            maptilersdk.config.apiKey = 'w2XzC62C0m417hgxO9LK'; ///
             console.log(process.env.MAPTILER_API);
 
             let lng = geonameId.location.latlon.longitude;
@@ -221,21 +221,12 @@ export default function Stats(props) {
             <section id='accordion'>
                 <UncontrolledAccordion stayOpen>
 
-                    {/* <AccordionItem onClick={() => handleAccordionToggle('0')}>
-                        <AccordionHeader isOpen={activeAccordionId ===  '0'} targetId='0'><h4>Images</h4></AccordionHeader>
-                        <AccordionBody accordionId="0">
-                            {/* <Heading style={{textAlign:'center', marginBottom:'28px'}} as='h2'>Monthly Cost Of Living</Heading> */}
-                            {/* <p>Images here....................</p> */}
-                            {/* {console.log(salaryInfo)} */}
-                        {/* </AccordionBody> 
-                    </AccordionItem> */}
-
-
                     <AccordionItem>
                         <AccordionHeader targetId='1'><h4>Salaries Per Profession</h4></AccordionHeader>
                         <AccordionBody accordionId="1">
                             <Heading style={{textAlign:'center'}} as='h2'>Annual Salaries</Heading>
-                            <h4 style={{marginBottom:'28px'}}>(Average)</h4>
+                            <h4>(Average)</h4>
+                            <h6 style={{marginBottom:'28px'}}>In USD</h6>
                             {/* {console.log(salaryInfo)} */}
                             <div id='salary-list' className='accordion-content'>
                                 <ul>
@@ -245,7 +236,7 @@ export default function Stats(props) {
                                                     {each.job.title}
                                                 </h5>
                                                 <p>
-                                                    USD ${(each.salary_percentiles.percentile_50).toLocaleString('us')}
+                                                    ${(each.salary_percentiles.percentile_50).toLocaleString('us')}
                                                 </p>
                                     </li>
                                 ))
@@ -259,18 +250,19 @@ export default function Stats(props) {
                         <AccordionHeader targetId='2'><h4>Cost Of Living</h4></AccordionHeader>
                         <AccordionBody accordionId="2">
                             <Heading style={{textAlign:'center'}} as='h2'>Monthly Cost Of Living</Heading>
-                            <h4 style={{marginBottom:'28px'}}>(Average)</h4>
+                            <h4>(Average)</h4>
+                            <h6 style={{marginBottom:'28px'}}>In USD</h6>
                             <section id='cost-of-living-section'>
                                 <div id='housing' className='cost-of-living-div accordion-content'>
                                     <ul>
-                                        {console.log(costLiving)}
-                                    {costLiving !== null && costLiving.categories[8].data.slice(0,3).map((each) => (
+                                        {console.log(slugDetails)}
+                                    {slugDetails !== null && slugDetails.categories[8].data.slice(0,3).map((each) => (
                                         <li key={each.id}>
                                                     <h5>
                                                         {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
                                                     </h5>
                                                     <p>
-                                                        USD ${(each.currency_dollar_value)}
+                                                        ${(each.currency_dollar_value).toLocaleString('us')}
                                                     </p>
                                         </li>
                                     ))
@@ -280,13 +272,13 @@ export default function Stats(props) {
 
                                 <div id='groceries' className='cost-of-living-div accordion-content'>
                                     <ul>
-                                    {costLiving !== null && costLiving.categories[3].data.slice(1,10).map((each) => (
+                                    {slugDetails !== null && slugDetails.categories[3].data.slice(1,10).map((each) => (
                                         <li key={each.id}>
                                                     <h5>
                                                         {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
                                                     </h5>
                                                     <p>
-                                                        USD ${(each.currency_dollar_value)}
+                                                        ${(each.currency_dollar_value)}
                                                     </p>
                                         </li>
                                     ))
@@ -308,21 +300,82 @@ export default function Stats(props) {
                     <AccordionItem>
                         <AccordionHeader targetId='4'><h4>Economy & Population</h4></AccordionHeader>
                         <AccordionBody accordionId='4'>
-                                <p>fs</p>
+                            <section id='economy-section'>
+                                <div id='economy-div' className=' accordion-content'>
+                                    <ul>
+                                        {/* {console.log(costLiving)} */}
+                                    <h4>GDP</h4>
+                                    <h6>In USD</h6>
+                                    {slugDetails !== null && slugDetails.categories[5].data.slice(2,5).map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.currency_dollar_value ? '$' + Number(each.currency_dollar_value.toFixed(0)).toLocaleString('us') : each.percent_value ? ((each.percent_value) * 100).toFixed(1) + ' %' : each.currency_dollar_value}
+                                            </p>
+                                        </li>
+                                        
+                                    ))
+                                    }
+
+                                    {/* .slice(2,5) */}
+                                    <h4>Population</h4>
+                                    {slugDetails !== null && slugDetails.categories[1].data.map((each) => (
+                                        
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {Number((each.float_value.toFixed(0))).toLocaleString('us')}
+                                            </p>
+                                        </li>
+                                        
+                                    ))
+                                    }
+
+                                    </ul>
+                                </div>
+                            </section>
+
                         </AccordionBody>
                     </AccordionItem>
 
                     <AccordionItem>
                         <AccordionHeader targetId='5'><h4>Education</h4></AccordionHeader>
                         <AccordionBody accordionId='5'>
-                                <p>fs</p>
+                            <Heading style={{textAlign:'center'}} as='h2'>Education </Heading>
+                            {/* <h4 style={{marginBottom:'28px'}}>(Average)</h4> */}
+                            <section id='education-section'>
+                                <div id='education-div' className=' accordion-content'>
+                                    <ul>
+                                        {/* {console.log(costLiving)} */}
+                                        {/* .slice(0,3) */}
+                                    {slugDetails !== null && slugDetails.categories[6].data.map((each) => (
+                                        <li key={each.id}>
+                                            {/* {console.log(each.float_value)} */}
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(2) : ((each.percent_value) * 100).toFixed(1) +' %'}
+                                            {/*  */}
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    </ul>
+                                </div>
+                            </section>
+
                         </AccordionBody>
                     </AccordionItem>
 
                     <AccordionItem>
                         <AccordionHeader targetId='6'><h4>Culture & Language</h4></AccordionHeader>
                         <AccordionBody accordionId='6'>
-                                <p>fs</p>
+
                         </AccordionBody>
                     </AccordionItem>
 
