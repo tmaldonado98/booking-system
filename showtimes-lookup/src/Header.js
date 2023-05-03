@@ -32,6 +32,8 @@ export default function Header (){
     
     const [emailRegValue, setEmailRegValue] = useState('');
     const [passwordRegValue, setPasswordRegValue] = useState('');
+    const [nameRegValue, setNameRegValue] = useState('');
+
     const [pswValid, setPswValid] = useState(null);
     const [pswInvalid, setPswInvalid] = useState(null);
 
@@ -68,7 +70,9 @@ export default function Header (){
     function handleRegPassword(event){
         setPasswordRegValue(event.target.value);
     }
-
+    function handleRegName(event){
+        setNameRegValue(event.target.value);
+    }
     // useEffect(() => {
     //     console.log(passwordValue)
     // }, [passwordValue])
@@ -84,7 +88,7 @@ export default function Header (){
     }
     async function handleRegistration(){
         if (emailRegex.test(emailRegValue) === true && pswValid === true) {
-            await axios.post('http://localhost/booking-system/createAcct.php', {emailValue: emailRegValue, passwordValue: passwordRegValue},  
+            await axios.post('http://localhost/booking-system/createAcct.php', {emailValue: emailRegValue, passwordValue: passwordRegValue, nameValue: nameRegValue},  
             {headers: {'Content-Type':'application/json'}})
             .then(response => {
                 setCurrentAccount(response.data);
@@ -242,19 +246,27 @@ export default function Header (){
                         valid={pswValid}
                         invalid={pswInvalid}
                     />
+
+                    <h4>What Should We Call You?</h4>
+                    <Input
+                        bsSize="lg"
+                        onChange={handleRegName}
+                        type="text"
+                    />
+
                 </ModalBody>
                 }
                 <ModalFooter style={{justifyContent: 'center'}}>
                     {rSelected === 1 &&
                     <Button color="primary" 
-                    // onClick={() => handleSignIn(emailLogValue, passwordLogValue)}
+                    onClick={() => handleSignIn(emailLogValue, passwordLogValue)}
                     >
                         Log In
                     </Button>
                     }
                     {rSelected === 2 &&
                     <Button color="primary" 
-                    // onClick={handleRegistration}
+                    onClick={handleRegistration}
                     >
                         Create Account
                     </Button>
