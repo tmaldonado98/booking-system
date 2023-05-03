@@ -1,14 +1,27 @@
 #nav {
     background: #252525;
-    padding: 12px;
+    padding: 16px;
+    /* display: flex;
+    justify-content: space-around;
+    align-items: center; */
 }
 
-#nav-buttons{
+.nav-buttons{
     width: fit-content;
     display: flex;
     justify-content: space-evenly;
     gap: 24px;
     padding: 6px 16px;
+    align-items: center;
+}
+
+#nav h6 {
+    color: ivory;
+}
+
+#nav h5{
+    color: ivory;
+    border-bottom: 1px solid;
 }
 
 #header-section {

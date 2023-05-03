@@ -152,7 +152,8 @@ export default function Header (){
             // .then(console.log('Logged in!'))
             .catch(error => console.log(error))
         } else {
-            return false; ///later set error validation
+            return false; 
+            ///later set error validation
         }
     }
 
@@ -163,19 +164,36 @@ export default function Header (){
             // handleSignIn(currentAccount.email, currentAccount.password);
         }
         else if (currentAccount === false){
+            ///// STATE FOR ERROR MESSAGE IN MODAL
             console.log('User account does not exist in our records!')
         }
-        console.log(currentAccount)
+        // console.log(currentAccount)
     }, [currentAccount])
+
+    function handleSignOut (){
+        axios.post('http://localhost/booking-system/destroySession.php')
+        .then(response => {
+          console.log(response.data); // will return 'Session destroyed'
+        })
+        .then(setCurrentAccount(null))
+        .catch(error => {
+          console.log(error);
+        });
+      
+    }
 
     return(
     <>
-        <div id='nav'>          
-            <div id='nav-buttons'>
-                <Button onClick={toggle}>Log In/Sign Up</Button>
-            </div>
-        </div>
+        <div id='nav'>   
         {!currentAccount &&
+        <>       
+            <div className='nav-buttons'>
+                <Button onClick={toggle}>Log In/Sign Up</Button>
+                <h6>
+                    Log In To Create Your Own Custom Lists Of Countries!
+                </h6>
+            </div>
+        
             <Modal isOpen={modal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>
                     <ButtonGroup>
@@ -197,6 +215,7 @@ export default function Header (){
                         </Button>
                     </ButtonGroup>
                 </ModalHeader>
+                
                 {rSelected === 1 &&
                 <ModalBody>
                     <h4>Email Address</h4>
@@ -276,13 +295,22 @@ export default function Header (){
                     </Button>
                 </ModalFooter>
             </Modal>
+
+        </>
         }
-        {/* {currentAccount &&
-            ///account dashboard, can be in modal. Show list
+        {currentAccount &&
+        <>
+            <div className='nav-buttons'>
+                <Button onClick={handleSignOut}>Sign Out</Button>
+                <Button>My Lists</Button>   {/*react route!  */}
+                <h5>Welcome {currentAccount.name}!</h5>
+            </div>
 
-
-        } */}
-
+        </>
+        }
+        
+        </div>
+        
         <section id="header-section"> 
             <nav>
                 <Heading as='h1' size='xl'>
