@@ -258,7 +258,7 @@ export default function Stats(props) {
                                                         {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
                                                     </h5>
                                                     <p>
-                                                        ${(each.currency_dollar_value).toLocaleString('us')}
+                                                        {each.currency_dollar_value ? + '$' + (each.currency_dollar_value).toLocaleString('us') : ''}
                                                     </p>
                                         </li>
                                     ))

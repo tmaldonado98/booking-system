@@ -9,6 +9,10 @@ function ApiCards (props) {
     // const [selectedPlace, setSelectedPlace] = useContext(MyContext);
     // const [placeData, setPlaceData] = useContext(MyContext);
     // const [selectedGeo, setSelectedGeo] = useContext(MyContext)
+    const [imgData, setImgData] = useState(null);
+    const [slugForImg, setSlugForImg] = useState(null);
+    const [imgUrl, setImgUrl] = useState(null);
+    
     const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo, mapCreated, setMapCreated} = useContext(MyContext);
 
     function switchToStats () {
@@ -23,18 +27,67 @@ function ApiCards (props) {
         .catch(error => console.log(error));
     }
 
+
+    // get slug, then get href from slug parameter
+
     useEffect(() => {
-        console.log(selectedGeo)
-    }, [selectedGeo])
+        // console.log(props.fullData)
+        axios.get(`${props.fullData._links['city:item'].href}`,
+        {headers: {'Content-Type': 'application/json'}})
+        .then(response => {
+            setImgData(response.data)
+            // console.log(response.data)
+        })
+
+    }, [])
+    
+    useEffect(() => {
+        if (imgData !== null) {
+            if (imgData._links['city:urban_area']) {
+            // console.log(imgData)
+                
+                axios.get(`${imgData._links['city:urban_area']['href']}`,
+                {headers: {'Content-Type': 'application/json'}})
+                .then(response => {
+                    setSlugForImg(response.data)
+                    // console.log(response.data)
+                })
+            } else {
+                setSlugForImg(null)
+            }
+            
+        }
+
+    }, [imgData])
+
+    useEffect(() => {
+        if (slugForImg !== null) {
+            axios.get(`${slugForImg._links['ua:images']['href']}`,
+            {headers: {'Content-Type': 'application/json'}})
+            .then(response => {
+                setImgUrl(response.data)
+            });
+
+        } else {
+            setImgUrl(null);
+        }
+    }, [slugForImg])
 
     return (
         <>
             <Card width='250px'>
                 <CardHeader>
-                    <Heading size='md'>{props.cardData}</Heading>
+                    <Heading size='md'>{imgData !== null && imgData.name + ', ' + imgData._links['city:country']['name']}</Heading>
                 </CardHeader>
-                <CardFooter>
-                <Button onClick={switchToStats}>Select</Button>
+                <CardBody>
+                    <div id='img-container'>
+                        {imgUrl !== null &&
+                            <img src={imgUrl.photos[0].image.web} />
+                        }
+                    </div>
+                </CardBody>
+                <CardFooter style={{justifyContent:'center'}}>
+                    <Button onClick={switchToStats}>Select</Button>
                 </CardFooter>
             </Card>
         </>

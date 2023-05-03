@@ -35,7 +35,7 @@ function Main() {
   }, [])
 
     useEffect(() => {
-      console.log(stockData);
+      // console.log(stockData);
     }, [stockData])
 
     function handleChange(event){
@@ -58,8 +58,8 @@ function Main() {
   
 
   useEffect(() => {
-    console.log(cityData);
-    console.log(embeddedResults);
+    // console.log(cityData);
+    // console.log(embeddedResults);
 
   }, [cityData])
   
@@ -85,7 +85,7 @@ function Main() {
   }
 
   useEffect(() => {
-    console.log(selectedGeo)
+    // console.log(selectedGeo)
   }, [selectedGeo])
 
 
@@ -109,6 +109,7 @@ function Main() {
 
         {selectedPlace === false ?
         <div id='search-results'>
+          {/* {console.log(embeddedResults)} */}
           {embeddedResults && embeddedResults.map(each => <ApiCards cardData={each.matching_full_name} fullData={each}/>)}
         </div>
         :
@@ -123,9 +124,9 @@ function Main() {
       </section>
 
       <section id='stock-container'>
-        <Heading as='h2' size='md' id='stock-header'>Some Cities You Might Like...</Heading>
+        <Heading as='h2' size='md' id='stock-header'>Major Cities Around The World</Heading>
         <div id='stock-data'>
-          {stockData ? stockData.map(each => <ApiCards cardData={each.matching_full_name} fullData={each}/>) : ''}
+          {stockData ? stockData.map(each => <ApiCards dataStock={stockData} cardData={each.matching_full_name} fullData={each}/>) : ''}
         </div>
       </section>
       <main>
