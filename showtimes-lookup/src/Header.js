@@ -1,9 +1,10 @@
 import './Header.css';
 import { Heading } from '@chakra-ui/react'
 import { Button, ButtonGroup, Modal, ModalHeader, ModalBody, ModalFooter, Input } from 'reactstrap';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 // import styled from '@emotion/styled';
 import axios from 'axios';
+import MyContext from './Context';
 
 export default function Header (){
     ///Modal state
@@ -44,9 +45,8 @@ export default function Header (){
     const [logInvalid, setLogInvalid] = useState(null);
 
     const [registrationPosted, setRegistrationPosted] = useState(null);
-    const [currentAccount, setCurrentAccount] = useState(null); ///change later to useCOntext
 
-    
+    const {currentAccount, setCurrentAccount} = useContext(MyContext);    
 
     //email regex pattern
     const emailRegex = /^([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
@@ -151,6 +151,7 @@ export default function Header (){
             .then(setPasswordLogValue(''))
             // .then(console.log('Logged in!'))
             .catch(error => console.log(error))
+            setModalConfirm(false);
         } else {
             return false; 
             ///later set error validation
@@ -176,11 +177,19 @@ export default function Header (){
           console.log(response.data); // will return 'Session destroyed'
         })
         .then(setCurrentAccount(null))
+        .then(setRegInvalid(null))
+        .then(setRegValid(null))
         .catch(error => {
           console.log(error);
         });
-      
+
+        toggle();
     }
+
+    ////confirm modal
+    const [modalConfirm, setModalConfirm] = useState(false);
+
+    const toggleConfirm = () => setModalConfirm(!modalConfirm);
 
     return(
     <>
@@ -188,9 +197,9 @@ export default function Header (){
         {!currentAccount &&
         <>       
             <div className='nav-buttons'>
-                <Button onClick={toggle}>Log In/Sign Up</Button>
+                <Button onClick={toggle}>Sign In/Create Account</Button>
                 <h6>
-                    Log In To Create Your Own Custom Lists Of Countries!
+                    Sign In To Create Your Own Custom Lists Of Countries!
                 </h6>
             </div>
         
@@ -203,7 +212,7 @@ export default function Header (){
                         onClick={() => setRSelected(1)}
                         active={rSelected === 1}
                         >
-                        Log In
+                        Sign In
                         </Button>
                         <Button
                         color="dark"
@@ -211,7 +220,7 @@ export default function Header (){
                         onClick={() => setRSelected(2)}
                         active={rSelected === 2}
                         >
-                            Sign Up
+                            Create Account
                         </Button>
                     </ButtonGroup>
                 </ModalHeader>
@@ -280,7 +289,7 @@ export default function Header (){
                     <Button color="primary" 
                     onClick={() => handleSignIn(emailLogValue, passwordLogValue)}
                     >
-                        Log In
+                        Sign In
                     </Button>
                     }
                     {rSelected === 2 &&
@@ -301,11 +310,27 @@ export default function Header (){
         {currentAccount &&
         <>
             <div className='nav-buttons'>
-                <Button onClick={handleSignOut}>Sign Out</Button>
+                <Button onClick={toggleConfirm}>Sign Out</Button>
                 <Button>My Lists</Button>   {/*react route!  */}
-                <h5>Welcome {currentAccount.name}!</h5>
+                <h5>Welcome, {currentAccount.name}!</h5>
             </div>
+            <div>
 
+            <Modal isOpen={modalConfirm} toggle={toggleConfirm}>
+                <ModalHeader toggle={toggleConfirm}>Sign Out?</ModalHeader>
+                <ModalBody>
+                    Please confirm that you wish to sign out.
+                </ModalBody>
+                <ModalFooter>
+                <Button color="primary" onClick={handleSignOut}>
+                    Sign Out
+                </Button>{' '}
+                <Button color="secondary" onClick={toggleConfirm}>
+                    Cancel
+                </Button>
+                </ModalFooter>
+            </Modal>
+            </div>  
         </>
         }
         

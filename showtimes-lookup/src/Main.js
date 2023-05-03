@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 
 function Main() {
-  const [loggedIn, setLoggedIn] = useState(false); ///context
+  const [currentAccount, setCurrentAccount] = useState(null); ///change later to useCOntext
   const [isAnimated, setIsAnimated] = useState(false)
   const [text, setText] = useState('');
   const [cityData, setCityData] = useState('');
@@ -90,7 +90,7 @@ function Main() {
 
 
   return (
-    <MyContext.Provider value={{selectedPlace, setSelectedPlace,  selectedGeo, setSelectedGeo, loggedIn, setLoggedIn, mapCreated, setMapCreated}}>
+    <MyContext.Provider value={{selectedPlace, setSelectedPlace,  selectedGeo, setSelectedGeo, currentAccount, setCurrentAccount, mapCreated, setMapCreated}}>
     <> 
       <Header />
       <section>

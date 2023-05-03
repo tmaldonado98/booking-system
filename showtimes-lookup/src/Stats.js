@@ -39,7 +39,7 @@ export default function Stats(props) {
 
     const [provokeRender, setProvokeRender] = useState(false);
 
-    const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated} = useContext(MyContext);
+    const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount} = useContext(MyContext);
 
     function setScoreFromSlug(){
         // console.log(slug)
@@ -114,14 +114,14 @@ export default function Stats(props) {
         }, 6000)
     }
 
-    function handleSaveUnauth() {
-        setShowUnauth();
+    function handleSaveUnsave() {
+        // setShowUnauth();
         // console.log(loggedIn)
-        // if (loggedIn === false) {
-        //     setShowUnauth();
-        // } else if (loggedIn === true){
-        //     setSaved(!saved);
-        // }
+        if (!currentAccount) {
+            setShowUnauth();
+        } else if (currentAccount){
+            setSaved(!saved);
+        }
 
     }
 
@@ -171,7 +171,7 @@ export default function Stats(props) {
         <div id='heading-w-bookmark'>
             <Heading style={{textAlign: 'center'}} as='h4'>{props.data.name + ', ' + props.data._links['city:country'].name}</Heading>
             {/* <Heading style={{textAlign: 'center'}} as='h4'>{selectedGeo.name}</Heading> */}
-            {saved === false ? <div className='bookmarked'><FaRegBookmark style={{cursor: 'pointer'}} onClick={handleSaveUnauth}/></div> : <div className='bookmarked'><FaBookmark style={{cursor: 'pointer'}} onClick={handleUnsave}/><span>Saved To Your List!</span></div>}
+            {saved === false ? <div className='bookmarked'><FaRegBookmark style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/></div> : <div className='bookmarked'><FaBookmark style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/><span>Saved To Your List!</span></div>}
         {/* change event for second bookmark case */}
         </div>
             <div id='img-w-summary'>
