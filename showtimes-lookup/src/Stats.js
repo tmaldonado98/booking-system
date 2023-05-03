@@ -42,7 +42,7 @@ export default function Stats(props) {
     const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated} = useContext(MyContext);
 
     function setScoreFromSlug(){
-        console.log(slug)
+        // console.log(slug)
         axios.get(`${slug._links['ua:scores'].href}`,
         {headers: {'Content-Type': 'application/json'}})
         .then(response => {
@@ -135,17 +135,15 @@ export default function Stats(props) {
             document.getElementById('map-container').innerHTML = '';
         }
 
+        // console.log(process.env.REACT_APP_MAPTILER_API);
 
         if (activeAccordionId === '3' && mapCreated === false) {
-            console.log('hey');
-            setMapCreated(true);
+            setMapCreated(true); 
             maptilersdk.config.apiKey = 'w2XzC62C0m417hgxO9LK'; ///
-            console.log(process.env.MAPTILER_API);
 
             let lng = geonameId.location.latlon.longitude;
             let lat = geonameId.location.latlon.latitude;
             setLatLon({lon:lng, lati:lat});
-            console.log(lng, lat);
 
             const map = new maptilersdk.Map({
             container: 'map-container', // container's id or the HTML element to render the map
@@ -171,7 +169,8 @@ export default function Stats(props) {
                 You need to be logged into your account in order to save places to your list.
             </Alert>
         <div id='heading-w-bookmark'>
-            <Heading style={{textAlign: 'center'}} as='h4'>{props.data.full_name}</Heading>
+            <Heading style={{textAlign: 'center'}} as='h4'>{props.data.name + ', ' + props.data._links['city:country'].name}</Heading>
+            {/* <Heading style={{textAlign: 'center'}} as='h4'>{selectedGeo.name}</Heading> */}
             {saved === false ? <div className='bookmarked'><FaRegBookmark style={{cursor: 'pointer'}} onClick={handleSaveUnauth}/></div> : <div className='bookmarked'><FaBookmark style={{cursor: 'pointer'}} onClick={handleUnsave}/><span>Saved To Your List!</span></div>}
         {/* change event for second bookmark case */}
         </div>
@@ -225,8 +224,7 @@ export default function Stats(props) {
                         <AccordionHeader targetId='1'><h4>Salaries Per Profession</h4></AccordionHeader>
                         <AccordionBody accordionId="1">
                             <Heading style={{textAlign:'center'}} as='h2'>Annual Salaries</Heading>
-                            <h4>(Average)</h4>
-                            <h6 style={{marginBottom:'28px'}}>In USD</h6>
+                            <h4 style={{marginBottom:'28px'}}>(Average In USD)</h4>
                             {/* {console.log(salaryInfo)} */}
                             <div id='salary-list' className='accordion-content'>
                                 <ul>
@@ -236,7 +234,7 @@ export default function Stats(props) {
                                                     {each.job.title}
                                                 </h5>
                                                 <p>
-                                                    ${(each.salary_percentiles.percentile_50).toLocaleString('us')}
+                                                    ${Number((each.salary_percentiles.percentile_50).toFixed(0)).toLocaleString('us')}
                                                 </p>
                                     </li>
                                 ))
@@ -250,12 +248,10 @@ export default function Stats(props) {
                         <AccordionHeader targetId='2'><h4>Cost Of Living</h4></AccordionHeader>
                         <AccordionBody accordionId="2">
                             <Heading style={{textAlign:'center'}} as='h2'>Monthly Cost Of Living</Heading>
-                            <h4>(Average)</h4>
-                            <h6 style={{marginBottom:'28px'}}>In USD</h6>
+                            <h4 style={{marginBottom:'28px'}}>(Average In USD)</h4>
                             <section id='cost-of-living-section'>
                                 <div id='housing' className='cost-of-living-div accordion-content'>
                                     <ul>
-                                        {console.log(slugDetails)}
                                     {slugDetails !== null && slugDetails.categories[8].data.slice(0,3).map((each) => (
                                         <li key={each.id}>
                                                     <h5>
@@ -302,10 +298,9 @@ export default function Stats(props) {
                         <AccordionBody accordionId='4'>
                             <section id='economy-section'>
                                 <div id='economy-div' className=' accordion-content'>
-                                    <ul>
-                                        {/* {console.log(costLiving)} */}
                                     <h4>GDP</h4>
-                                    <h6>In USD</h6>
+                                    <h6 style={{marginBottom:'28px'}}>(Average In USD)</h6>
+                                    <ul>
                                     {slugDetails !== null && slugDetails.categories[5].data.slice(2,5).map((each) => (
                                         <li key={each.id}>
                                             <h5>
@@ -318,23 +313,79 @@ export default function Stats(props) {
                                         
                                     ))
                                     }
+                                    </ul>
+                                </div>
 
-                                    {/* .slice(2,5) */}
-                                    <h4>Population</h4>
-                                    {slugDetails !== null && slugDetails.categories[1].data.map((each) => (
-                                        
+                                <div id='business-div' className=' accordion-content'>
+                                    <h4>Business Freedom & Labor Restrictions</h4>
+                                    <ul>
+                                    {slugDetails !== null && slugDetails.categories[0].data.slice(0, 2).map((each) => (
                                         <li key={each.id}>
                                             <h5>
                                                 {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
                                             </h5>
                                             <p>
-                                                {Number((each.float_value.toFixed(0))).toLocaleString('us')}
+                                                {each.float_value ? (each.float_value).toFixed(0) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''} / 100
                                             </p>
                                         </li>
-                                        
                                     ))
                                     }
+                                    {slugDetails !== null && slugDetails.categories[0].data.slice(4,6).map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? (each.int_value * 100).toFixed(0) : each.string_value ? each.string_value : ''}
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    </ul>
+                                </div>
 
+                                <div id='corruption-div' className=' accordion-content'>
+                                    <h4>Corruption</h4>
+                                    <ul>
+                                    {slugDetails !== null && slugDetails.categories[0].data.slice(2,4).map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''} / 100
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    </ul>
+                                </div>
+
+                                <div id='population-div' className=' accordion-content'>
+                                    <h4>Population</h4>
+                                    <ul>
+                                    {slugDetails !== null && slugDetails.categories[1].data.slice(2,4).map((each) => (
+                                        <>
+                                        <li>
+                                            <h5>
+                                                City Total Population
+                                            </h5>
+                                            <p>
+                                                {(selectedGeo.population).toLocaleString('us')}
+                                            </p>
+                                        </li>
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+
+                                            <p>
+                                                {Number((each.float_value.toFixed(0))).toLocaleString('us')} / 100
+                                            </p>
+                                        </li>
+                                        </>
+                                    ))
+                                    }
                                     </ul>
                                 </div>
                             </section>
@@ -345,21 +396,19 @@ export default function Stats(props) {
                     <AccordionItem>
                         <AccordionHeader targetId='5'><h4>Education</h4></AccordionHeader>
                         <AccordionBody accordionId='5'>
-                            <Heading style={{textAlign:'center'}} as='h2'>Education </Heading>
+                            <h4>PISA & University Scores</h4>
                             {/* <h4 style={{marginBottom:'28px'}}>(Average)</h4> */}
                             <section id='education-section'>
                                 <div id='education-div' className=' accordion-content'>
                                     <ul>
-                                        {/* {console.log(costLiving)} */}
                                         {/* .slice(0,3) */}
                                     {slugDetails !== null && slugDetails.categories[6].data.map((each) => (
                                         <li key={each.id}>
-                                            {/* {console.log(each.float_value)} */}
                                             <h5>
                                                 {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
                                             </h5>
                                             <p>
-                                                {each.float_value ? (each.float_value).toFixed(2) : ((each.percent_value) * 100).toFixed(1) +' %'}
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''}
                                             {/*  */}
                                             </p>
                                         </li>
@@ -373,38 +422,222 @@ export default function Stats(props) {
                     </AccordionItem>
 
                     <AccordionItem>
-                        <AccordionHeader targetId='6'><h4>Culture & Language</h4></AccordionHeader>
+                        <AccordionHeader targetId='6'><h4>Leisure, Language & Internet</h4></AccordionHeader>
                         <AccordionBody accordionId='6'>
+                            <section id='culture-section'>
+                                <div id='leisure-div' className=' accordion-content'>
+                                    <h4>Leisure</h4>
+                                    <ul>
+                                        {/* .slice(0,3) */}
+                                    {slugDetails !== null && slugDetails.categories[4].data.map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''}
+                                            {/*  */}
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    </ul>
+                                </div>
+
+                                <div id='language-div' className=' accordion-content'>
+                                    <h4>Language(s)</h4>
+                                    <ul>
+                                        {/* .slice(0,3) */}
+                                    {slugDetails !== null && slugDetails.categories[11].data.slice(0, 1).map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''} / 100
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    {slugDetails !== null && slugDetails.categories[11].data.slice(2).map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''}
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+
+                                    </ul>
+                                </div>
+
+                                <div id='internet-div' className=' accordion-content'>
+                                    <h4>Internet</h4>
+                                    <ul>
+                                    {slugDetails !== null && slugDetails.categories[13].data.slice(0, 1).map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                Average {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''} / 100
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    {slugDetails !== null && slugDetails.categories[13].data.slice(2,3).map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                Average     {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''}
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    </ul>
+                                </div>
+                            </section>
 
                         </AccordionBody>
                     </AccordionItem>
 
                     <AccordionItem>
-                        <AccordionHeader targetId='7'><h4>Social Tolerance</h4></AccordionHeader>
+                        <AccordionHeader targetId='7'><h4>LGBT Community</h4></AccordionHeader>
                         <AccordionBody accordionId='7'>
-                                <p>fs</p>
-                        </AccordionBody>
-                    </AccordionItem>
+                            <section id='tolerance-section'>
+                                <div id='lgbt-div' className=' accordion-content'>
+                                    <ul>
+                                        {/* */}
+                                    {slugDetails !== null && slugDetails.categories[12].data.slice(0,11).map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''}
+                                            {/*  */}
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    </ul>
+                                </div>
+                            </section>
 
-                    <AccordionItem>
-                        <AccordionHeader targetId='8'><h4>Leisure & Internet</h4></AccordionHeader>
-                        <AccordionBody accordionId='8'>
-                                <p>fs</p>
                         </AccordionBody>
                     </AccordionItem>
 
                     <AccordionItem>
                         <AccordionHeader targetId='9'><h4>Weather, Safety, Pollution</h4></AccordionHeader>
                         <AccordionBody accordionId='9'>
-                                <p>fs</p>
+                            <section id='wellbeing-section'>
+                                <div id='weather-div' className=' accordion-content'>
+                                    <h4>Weather</h4>
+                                    <h6 style={{marginBottom:'28px'}}>(Yearly Average)</h6>
+                                    <ul>
+                                    {slugDetails !== null && slugDetails.categories[2].data.map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? Number((each.float_value)).toFixed(1) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''}
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    </ul>
+                                </div>
+
+                                <div id='safety-div' className=' accordion-content'>
+                                    <h4>Safety</h4>
+                                    <ul>
+                                    {slugDetails !== null && slugDetails.categories[16].data.map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''}
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    </ul>
+                                </div>
+
+                                <div id='pollution-div' className=' accordion-content'>
+                                    <h4>Pollution</h4>
+                                    <ul>
+                                    {slugDetails !== null && slugDetails.categories[15].data.map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value * 100).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''} / 100
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    </ul>
+                                </div>
+                            </section>
+
                         </AccordionBody>
                     </AccordionItem>
 
                     <AccordionItem> 
-                        <AccordionHeader targetId='10'><h4>Entrepeneurship & Taxation</h4></AccordionHeader>
+                        <AccordionHeader targetId='10'><h4>Healthcare</h4></AccordionHeader>
                         <AccordionBody accordionId='10'>
-                                <p>fs</p> 
-                                 {/*  VC, Taxation, Startups  */}
+                            <section id='healthcare-section'>
+                                <div id='healthcare-div' className=' accordion-content'>
+                                    {/* <h4>Healthcare</h4> */}
+                                    <ul>
+                                    {slugDetails !== null && slugDetails.categories[7].data.slice(0,1).map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value * 100).toFixed(0) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''} / 100
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+
+                                    {slugDetails !== null && slugDetails.categories[7].data.slice(1,2).map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                Average {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(0) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''} years
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+
+                                    {slugDetails !== null && slugDetails.categories[7].data.slice(2,3).map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value * 100).toFixed(0) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''} / 100
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    </ul>
+                                </div>
+                            </section>
+
                         </AccordionBody>
                     </AccordionItem>
 
