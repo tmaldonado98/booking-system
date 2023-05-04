@@ -1,9 +1,11 @@
 import { Heading, Text, Input, Button } from '@chakra-ui/react';
-import { Alert, Progress } from 'reactstrap';
+import { Alert, Progress, DropdownToggle, DropdownMenu, DropdownItem, Dropdown, } from 'reactstrap';
 import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import axios from 'axios';
 import {FaRegBookmark, FaBookmark, FaPlusCircle} from 'react-icons/fa';
+import { FcCheckmark, } from 'react-icons/fc';
+import {IoIosAdd} from 'react-icons/io';
 import {
     UncontrolledAccordion,
     AccordionBody,
@@ -26,18 +28,13 @@ export default function Stats(props) {
     const [geonameId, setGeonameId] = useState(null);
     const [latLon, setLatLon] = useState(null);
 
-    const [images, setImages] = useState(null);
-
     const [saved, setSaved] = useState(false); //for bookmark status
-    // const [loggedIn, setLoggedIn] = useContext(MyContext); ///authenticated status context
 
     const [activeAccordionId, setActiveAccordionId] = useState(null);
 
     const handleAccordionToggle = (accordionId) => {
       setActiveAccordionId(activeAccordionId === accordionId ? null : accordionId);
     };
-
-    const [provokeRender, setProvokeRender] = useState(false);
 
     const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount} = useContext(MyContext);
 
@@ -103,15 +100,13 @@ export default function Stats(props) {
 
     ///alert state
     const [visible, setVisible] = useState(false);
-    const [visibleSignIn, setVisibleSignIn] = useState(false);
-    const [visibleSignOut, setVisibleSignOut] = useState(false);
+    // const [visibleSignIn, setVisibleSignIn] = useState(false);
+    // const [visibleSignOut, setVisibleSignOut] = useState(false);
 
 
     const onDismiss = () => setVisible(false);
-    const onDismissSignInAlert = () => setVisibleSignIn(false);
-    const onDismissSignOut = () => setVisibleSignOut(false);
-
-
+    // const onDismissSignInAlert = () => setVisibleSignIn(false);
+    // const onDismissSignOut = () => setVisibleSignOut(false);
 
     function setShowUnauth() {
         setVisible(true);
@@ -121,32 +116,37 @@ export default function Stats(props) {
         }, 6000)
     }
 
-    function setShowSuccessSignIn() {
-        setVisibleSignIn(true);
-        setTimeout(() => {
-            setVisibleSignIn(false)
-        }, 6000)
-    }
+    // function setShowSuccessSignIn() {
+    //     setVisibleSignIn(true);
+    //     setTimeout(() => {
+    //         setVisibleSignIn(false)
+    //     }, 6000)
+    // }
 
-    function setShowSignOut() {
-        setVisibleSignOut(true);
-        setTimeout(() => {
-            setVisibleSignOut(false)
-        }, 6000)
-    }
+    // function setShowSignOut() {
+    //     setVisibleSignOut(true);
+    //     setTimeout(() => {
+    //         setVisibleSignOut(false)
+    //     }, 6000)
+    // }
 
 
-    useEffect(() => {
-        if (currentAccount) {
-            setShowSuccessSignIn();
-        }
-        else if (!currentAccount){
-            setShowSignOut();
-        }
+    // useEffect(() => {
+    //     if (currentAccount) {
+    //         setShowSuccessSignIn();
+    //     }
+    //     else if (!currentAccount){
+    //         setShowSignOut();
+    //     }
 
-    }, [currentAccount])
+    // }, [currentAccount])
 
     
+    ////state for lists dropdown
+    const [listsDropdownOpen, setListsDropdownOpen] = useState(false);
+
+    const toggleLists = () => setListsDropdownOpen((prevState) => !prevState);
+
 
     function handleSaveUnsave() {
         // setShowUnauth();
@@ -155,6 +155,7 @@ export default function Stats(props) {
             setShowUnauth();
         } else if (currentAccount){
             setSaved(!saved);
+            toggleLists();
         }
 
     }
@@ -199,13 +200,13 @@ export default function Stats(props) {
 
     return (
         <>
-            <Alert color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
+            {/* <Alert color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
                 You have successfully signed in!
             </Alert>
 
             <Alert color="primary" isOpen={visibleSignOut} toggle={onDismissSignOut}>
                 You have successfully signed out.
-            </Alert>
+            </Alert> */}
 
             <Alert color="info" isOpen={visible} toggle={onDismiss}>
                 You need to be logged into your account in order to save places to your list.
@@ -213,9 +214,25 @@ export default function Stats(props) {
         <div id='heading-w-bookmark'>
             <Heading style={{textAlign: 'center'}} as='h4'>{props.data.name + ', ' + props.data._links['city:country'].name}</Heading>
             {/* <Heading style={{textAlign: 'center'}} as='h4'>{selectedGeo.name}</Heading> */}
-            {saved === false ? <div className='bookmarked'><FaPlusCircle style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/></div> : <div className='bookmarked'><FaPlusCircle style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/><span>Saved To Your List!</span></div>}
+            {/* {saved === false ? <div className='bookmarked'><FaPlusCircle style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/></div> : <div className='bookmarked'><FaPlusCircle style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/><span>Saved To Your List!</span></div>} */}
         {/* change event for second bookmark case */}
+            {/* <FaPlusCircle style={{cursor: 'pointer'}}  /> */}
+                <Dropdown toggle={handleSaveUnsave} isOpen={listsDropdownOpen} direction={'end'}>
+                  <DropdownToggle caret>Add To List </DropdownToggle>
+                  <DropdownMenu >
+                    <DropdownItem header>Your Lists</DropdownItem>
+                    <DropdownItem>{<div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>List One <IoIosAdd /></div>}</DropdownItem>  
+                    {/* conditionally render this component <FcCheckmark /> if this city is added to this specific list */}
+                    <DropdownItem divider />
+                    <DropdownItem>Create A New List </DropdownItem>
+                  {/* style={{display:'flex', flexDirection:'column', alignItems:'center'}} <FaPlusCircle /> */}
+                  </DropdownMenu>
+                </Dropdown>
         </div>
+
+
+
+
             <div id='img-w-summary'>
                 {imgUrl && <img src={imgUrl.photos[0].image.web} />}
                 {scores && <p dangerouslySetInnerHTML={{ __html: scores.summary}} id='summary'></p>}            
@@ -300,7 +317,7 @@ export default function Stats(props) {
                                                         {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
                                                     </h5>
                                                     <p>
-                                                        {each.currency_dollar_value ? + '$' + (each.currency_dollar_value).toLocaleString('us') : ''}
+                                                        {each.currency_dollar_value ? '$' + (each.currency_dollar_value).toLocaleString('us') : ''}
                                                     </p>
                                         </li>
                                     ))

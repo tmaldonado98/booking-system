@@ -4,6 +4,7 @@ import Header from './Header';
 import ApiCards from './ApiCards';
 import MyContext from './Context';
 import Stats from './Stats';
+import { Alert } from 'reactstrap';
 
 import { Heading, Text, Input, Button } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
@@ -18,6 +19,38 @@ function Main() {
 
   const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount} = useContext(MyContext);
   
+  const [visibleSignIn, setVisibleSignIn] = useState(false);
+  const [visibleSignOut, setVisibleSignOut] = useState(false);
+
+  const onDismissSignInAlert = () => setVisibleSignIn(false);
+  const onDismissSignOut = () => setVisibleSignOut(false);
+
+
+  function setShowSuccessSignIn() {
+    setVisibleSignIn(true);
+    setTimeout(() => {
+        setVisibleSignIn(false)
+    }, 6000)
+}
+
+function setShowSignOut() {
+    setVisibleSignOut(true);
+    setTimeout(() => {
+        setVisibleSignOut(false)
+    }, 6000)
+}
+
+
+useEffect(() => {
+    if (currentAccount) {
+        setShowSuccessSignIn();
+    }
+    else if (!currentAccount){
+        setShowSignOut();
+    }
+
+}, [currentAccount])
+
 
   useEffect(() => {
     // () =>{
@@ -88,6 +121,13 @@ function Main() {
   return (
     <> 
       <Header />
+      <Alert color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
+                You have successfully signed in!
+            </Alert>
+
+            <Alert color="primary" isOpen={visibleSignOut} toggle={onDismissSignOut}>
+                You have successfully signed out.
+            </Alert>
       <section>
         <motion.div id='container-location'
           animate={{x: isAnimated && '25vw', y: isAnimated && '-15vh', width: isAnimated && '30%'}}
@@ -126,8 +166,7 @@ function Main() {
       </section>
       <main>
 
-
-
+      
       </main>
       
     </>

@@ -366,7 +366,7 @@ export default function Header (){
                 </Heading>
                 <Heading as='h2' size='md'>
                     Ever wondered what it would be like to live in other cities? <br/>
-                    Look no further! Type in the name of a city and we will show you...
+                    Look no further! Type in the name of a city and CityLookup will show you...
                 </Heading>
             </nav>
             <nav>
