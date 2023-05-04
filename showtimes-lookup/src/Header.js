@@ -5,6 +5,8 @@ import { useContext, useEffect, useState } from 'react';
 // import styled from '@emotion/styled';
 import axios from 'axios';
 import MyContext from './Context';
+import { Link, useLocation, useNavigate} from 'react-router-dom';
+
 
 export default function Header (){
     ///Modal state
@@ -46,7 +48,7 @@ export default function Header (){
 
     const [registrationPosted, setRegistrationPosted] = useState(null);
 
-    const {currentAccount, setCurrentAccount} = useContext(MyContext);    
+    const {currentAccount, setCurrentAccount} = useContext(MyContext);
 
     //email regex pattern
     const emailRegex = /^([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
@@ -183,13 +185,25 @@ export default function Header (){
           console.log(error);
         });
 
-        toggle();
+        setModal(false);  ///sets sign in/register modal to false
+        navigate('/');
     }
 
     ////confirm modal
     const [modalConfirm, setModalConfirm] = useState(false);
 
     const toggleConfirm = () => setModalConfirm(!modalConfirm);
+
+
+    //// to render route buttons conditionally
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // useEffect(() => {
+    //     if (location.pathname === '/Lists' ||location.pathname === '/lists') {
+    //         navigate('/');
+    //     }
+    // }, [])
 
     return(
     <>
@@ -311,7 +325,16 @@ export default function Header (){
         <>
             <div className='nav-buttons'>
                 <Button onClick={toggleConfirm}>Sign Out</Button>
-                <Button>My Lists</Button>   {/*react route!  */}
+                {location.pathname === '/' ?
+                <Link to='/Lists'>
+                    <Button>My Lists</Button>
+                </Link>
+                :
+                location.pathname === '/Lists' &&
+                <Link to='/'>
+                    <Button>Home</Button>
+                </Link>
+                }
                 <h5>Welcome, {currentAccount.name}!</h5>
             </div>
             <div>
