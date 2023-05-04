@@ -3,7 +3,7 @@ import { Alert, Progress } from 'reactstrap';
 import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import axios from 'axios';
-import {FaRegBookmark, FaBookmark} from 'react-icons/fa';
+import {FaRegBookmark, FaBookmark, FaPlusCircle} from 'react-icons/fa';
 import {
     UncontrolledAccordion,
     AccordionBody,
@@ -103,8 +103,15 @@ export default function Stats(props) {
 
     ///alert state
     const [visible, setVisible] = useState(false);
+    const [visibleSignIn, setVisibleSignIn] = useState(false);
+    const [visibleSignOut, setVisibleSignOut] = useState(false);
+
 
     const onDismiss = () => setVisible(false);
+    const onDismissSignInAlert = () => setVisibleSignIn(false);
+    const onDismissSignOut = () => setVisibleSignOut(false);
+
+
 
     function setShowUnauth() {
         setVisible(true);
@@ -113,6 +120,33 @@ export default function Stats(props) {
             setVisible(false)
         }, 6000)
     }
+
+    function setShowSuccessSignIn() {
+        setVisibleSignIn(true);
+        setTimeout(() => {
+            setVisibleSignIn(false)
+        }, 6000)
+    }
+
+    function setShowSignOut() {
+        setVisibleSignOut(true);
+        setTimeout(() => {
+            setVisibleSignOut(false)
+        }, 6000)
+    }
+
+
+    useEffect(() => {
+        if (currentAccount) {
+            setShowSuccessSignIn();
+        }
+        else if (!currentAccount){
+            setShowSignOut();
+        }
+
+    }, [currentAccount])
+
+    
 
     function handleSaveUnsave() {
         // setShowUnauth();
@@ -165,13 +199,21 @@ export default function Stats(props) {
 
     return (
         <>
+            <Alert color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
+                You have successfully signed in!
+            </Alert>
+
+            <Alert color="primary" isOpen={visibleSignOut} toggle={onDismissSignOut}>
+                You have successfully signed out.
+            </Alert>
+
             <Alert color="info" isOpen={visible} toggle={onDismiss}>
                 You need to be logged into your account in order to save places to your list.
             </Alert>
         <div id='heading-w-bookmark'>
             <Heading style={{textAlign: 'center'}} as='h4'>{props.data.name + ', ' + props.data._links['city:country'].name}</Heading>
             {/* <Heading style={{textAlign: 'center'}} as='h4'>{selectedGeo.name}</Heading> */}
-            {saved === false ? <div className='bookmarked'><FaRegBookmark style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/></div> : <div className='bookmarked'><FaBookmark style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/><span>Saved To Your List!</span></div>}
+            {saved === false ? <div className='bookmarked'><FaPlusCircle style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/></div> : <div className='bookmarked'><FaPlusCircle style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/><span>Saved To Your List!</span></div>}
         {/* change event for second bookmark case */}
         </div>
             <div id='img-w-summary'>

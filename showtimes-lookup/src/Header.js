@@ -330,7 +330,7 @@ export default function Header (){
                     <Button>My Lists</Button>
                 </Link>
                 :
-                location.pathname === '/Lists' &&
+                location.pathname === '/lists' || location.pathname === '/Lists' &&
                 <Link to='/'>
                     <Button>Home</Button>
                 </Link>
