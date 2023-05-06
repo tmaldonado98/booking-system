@@ -1,8 +1,9 @@
-import { Heading, Text, Input, Button } from '@chakra-ui/react';
-import { Alert, Progress, DropdownToggle, DropdownMenu, DropdownItem, Dropdown, } from 'reactstrap';
+import { Heading, Text } from '@chakra-ui/react';
+import { Alert, Progress, DropdownToggle, DropdownMenu, DropdownItem, Dropdown, Spinner} from 'reactstrap';
 import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import axios from 'axios';
+import { Button, ButtonGroup, Modal, ModalHeader, ModalBody, ModalFooter, Input } from 'reactstrap';
 import {FaRegBookmark, FaBookmark, FaPlusCircle} from 'react-icons/fa';
 import { FcCheckmark, } from 'react-icons/fc';
 import {IoIosAdd} from 'react-icons/io';
@@ -36,7 +37,7 @@ export default function Stats(props) {
       setActiveAccordionId(activeAccordionId === accordionId ? null : accordionId);
     };
 
-    const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount} = useContext(MyContext);
+    const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount, listsState, setListsState} = useContext(MyContext);
 
     function setScoreFromSlug(){
         // console.log(slug)
@@ -100,13 +101,11 @@ export default function Stats(props) {
 
     ///alert state
     const [visible, setVisible] = useState(false);
-    // const [visibleSignIn, setVisibleSignIn] = useState(false);
-    // const [visibleSignOut, setVisibleSignOut] = useState(false);
-
+    const [changesSaved, setChangesSaved] = useState(false);
 
     const onDismiss = () => setVisible(false);
-    // const onDismissSignInAlert = () => setVisibleSignIn(false);
-    // const onDismissSignOut = () => setVisibleSignOut(false);
+    const onDismissChangesSaved = () => setChangesSaved(false);
+
 
     function setShowUnauth() {
         setVisible(true);
@@ -160,9 +159,6 @@ export default function Stats(props) {
 
     }
 
-    function handleUnsave(){
-        //// axios.post
-    }
 
 ////Maptiler code block
     useEffect(() => {
@@ -197,40 +193,103 @@ export default function Stats(props) {
     }, [activeAccordionId])
 ////
 
+    const [modalNewList, setModalNewList] = useState(false);
+    const [newListName, setNewListName] = useState('');
+    
+    const toggleNewList = () => {
+        setModalNewList(!modalNewList);
+        setNewListName('');
+    };
+
+
+    function handleListName (event) {
+        setNewListName(event.target.value);
+    }
+    
+    function createNewList () {
+
+        axios.post('http://localhost/booking-system/insertToLists.php', {listName: newListName},
+        {headers: {'Content-Type':'application/json'}})
+        .then(setNewListName(''))
+        .then(response => console.log(response.data))
+
+        onDismissChangesSaved();
+        setTimeout(() => {
+            setChangesSaved(false)
+        }, 7000)
+        toggleNewList();
+    }
+
+    useEffect(() => {
+
+    }, [listsState])
 
     return (
         <>
-            {/* <Alert color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
-                You have successfully signed in!
-            </Alert>
-
-            <Alert color="primary" isOpen={visibleSignOut} toggle={onDismissSignOut}>
-                You have successfully signed out.
-            </Alert> */}
-
             <Alert color="info" isOpen={visible} toggle={onDismiss}>
                 You need to be logged into your account in order to save places to your list.
             </Alert>
+
+            <Alert color="success" isOpen={changesSaved} toggle={onDismissChangesSaved}>
+                Changes to your list have been saved.
+            </Alert>
+
         <div id='heading-w-bookmark'>
             <Heading style={{textAlign: 'center'}} as='h4'>{props.data.name + ', ' + props.data._links['city:country'].name}</Heading>
-            {/* <Heading style={{textAlign: 'center'}} as='h4'>{selectedGeo.name}</Heading> */}
-            {/* {saved === false ? <div className='bookmarked'><FaPlusCircle style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/></div> : <div className='bookmarked'><FaPlusCircle style={{cursor: 'pointer'}} onClick={handleSaveUnsave}/><span>Saved To Your List!</span></div>} */}
-        {/* change event for second bookmark case */}
-            {/* <FaPlusCircle style={{cursor: 'pointer'}}  /> */}
                 <Dropdown toggle={handleSaveUnsave} isOpen={listsDropdownOpen} direction={'end'}>
                   <DropdownToggle caret>Add To List </DropdownToggle>
-                  <DropdownMenu >
-                    <DropdownItem header>Your Lists</DropdownItem>
-                    <DropdownItem>{<div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>List One <IoIosAdd /></div>}</DropdownItem>  
-                    {/* conditionally render this component <FcCheckmark /> if this city is added to this specific list */}
-                    <DropdownItem divider />
-                    <DropdownItem>Create A New List </DropdownItem>
-                  {/* style={{display:'flex', flexDirection:'column', alignItems:'center'}} <FaPlusCircle /> */}
-                  </DropdownMenu>
+                  {!listsState ?
+                    <DropdownMenu >
+                        <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
+                        <DropdownItem header style={{display:"flex", justifyContent:"space-evenly"}}>
+                            Loading...
+                            <Spinner
+                            color="primary"
+                            size="sm"
+                            
+                            >
+                            </Spinner>
+                        </DropdownItem>                       
+                        <DropdownItem divider />
+                        <DropdownItem onClick={toggleNewList}>Create A New List </DropdownItem>
+                    </DropdownMenu>
+                
+:
+                    <DropdownMenu >
+                        <DropdownItem header>Your Lists</DropdownItem>
+                        {/* {
+                            listsState.map()
+                        } */}
+
+                        <DropdownItem>{<div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>List One <IoIosAdd /></div>}</DropdownItem>  
+                        {/* conditionally render this component <FcCheckmark /> if this city is added to this specific list */}
+                        
+                        
+                        <DropdownItem divider />
+                        <DropdownItem onClick={toggleNewList}>Create A New List </DropdownItem>
+                    </DropdownMenu>
+                }
                 </Dropdown>
         </div>
 
-
+        <Modal isOpen={modalNewList}>
+            <ModalHeader>Create a new list</ModalHeader>
+            <ModalBody>
+                <Input
+                placeholder='Name your list'
+                onChange={handleListName}
+                >
+                </Input>
+            </ModalBody>
+            <ModalFooter style={{justifyContent:"center"}}>
+                <Button color="primary" onClick={createNewList}>
+                    Create New List
+                </Button>
+                <Button color="secondary" onClick={toggleNewList}>
+                    Cancel
+                </Button>
+            </ModalFooter>
+        </Modal>
 
 
             <div id='img-w-summary'>

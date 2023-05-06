@@ -10,10 +10,11 @@ export default function App() {
     const [selectedPlace, setSelectedPlace] = useState(false);
     const [selectedGeo, setSelectedGeo] = useState('');
     const [mapCreated, setMapCreated] = useState(false); //context
+    const [listsState, setListsState] = useState(null);
 
 
 return(
-    <MyContext.Provider value={{selectedPlace, setSelectedPlace,  selectedGeo, setSelectedGeo, currentAccount, setCurrentAccount, mapCreated, setMapCreated}}>
+    <MyContext.Provider value={{selectedPlace, setSelectedPlace,  selectedGeo, setSelectedGeo, currentAccount, setCurrentAccount, mapCreated, setMapCreated, listsState, setListsState}}>
         <Router>
             <Routes>
                 <Route exact path='/' element={<Main />}/>

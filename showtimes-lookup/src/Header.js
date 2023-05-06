@@ -258,6 +258,11 @@ export default function Header (){
                         value={passwordLogValue}
                         onChange={(event) => setPasswordLogValue(event.target.value)}
                     />
+                    <div id='demo-container'>
+                        <h4>Demo Account</h4>
+                        <p><u>Email Address:</u> demo@gmail.com</p>
+                        <p><u>Password:</u> demo</p>
+                    </div>
                 </ModalBody>
                 }
                 {rSelected === 2 &&
