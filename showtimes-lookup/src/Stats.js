@@ -104,7 +104,7 @@ export default function Stats(props) {
     const [changesSaved, setChangesSaved] = useState(false);
 
     const onDismiss = () => setVisible(false);
-    const onDismissChangesSaved = () => setChangesSaved(false);
+    const onDismissChangesSaved = () => setChangesSaved((prevState) => !prevState);
 
 
     function setShowUnauth() {
@@ -208,7 +208,7 @@ export default function Stats(props) {
     
     function createNewList () {
 
-        axios.post('http://localhost/booking-system/insertToLists.php', {listName: newListName},
+        axios.post('http://localhost/booking-system/insertToLists.php', {listName: newListName, userEmail: currentAccount.email},
         {headers: {'Content-Type':'application/json'}})
         .then(setNewListName(''))
         .then(response => console.log(response.data))
@@ -231,7 +231,7 @@ export default function Stats(props) {
             </Alert>
 
             <Alert color="success" isOpen={changesSaved} toggle={onDismissChangesSaved}>
-                Changes to your list have been saved.
+                Your changes have been saved.
             </Alert>
 
         <div id='heading-w-bookmark'>

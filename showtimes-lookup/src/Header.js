@@ -170,7 +170,7 @@ export default function Header (){
             ///// STATE FOR ERROR MESSAGE IN MODAL
             console.log('User account does not exist in our records!')
         }
-        // console.log(currentAccount)
+        console.log(currentAccount)
     }, [currentAccount])
 
     function handleSignOut (){
