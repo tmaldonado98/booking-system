@@ -7,7 +7,7 @@ import { Link, useLocation, useNavigate} from 'react-router-dom';
 
 function Lists () {
 
-    const {currentAccount, setCurrentAccount} = useContext(MyContext);    
+    const {currentAccount, setCurrentAccount, listsItems, setListsItems} = useContext(MyContext);    
 
 
     return (

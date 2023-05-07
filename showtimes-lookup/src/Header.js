@@ -174,7 +174,8 @@ export default function Header (){
     }, [currentAccount])
 
     function handleSignOut (){
-        axios.post('http://localhost/booking-system/destroySession.php')
+        axios.post('http://localhost/booking-system/destroySession.php',
+        {headers: {'Content-Type': 'application/json'}})
         .then(response => {
           console.log(response.data); // will return 'Session destroyed'
         })

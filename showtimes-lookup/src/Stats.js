@@ -37,7 +37,7 @@ export default function Stats(props) {
       setActiveAccordionId(activeAccordionId === accordionId ? null : accordionId);
     };
 
-    const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount, listsState, setListsState} = useContext(MyContext);
+    const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount, listsItems, setListsItems} = useContext(MyContext);
 
     function setScoreFromSlug(){
         // console.log(slug)
@@ -146,6 +146,16 @@ export default function Stats(props) {
 
     const toggleLists = () => setListsDropdownOpen((prevState) => !prevState);
 
+    // const [listItems, setListItems] = useState(null);
+
+    function updateListsItems () {
+        axios.post('http://localhost/booking-system/retrieveLists.php', {email: currentAccount.email},
+        {headers: {'Content-Type': 'application/json'}})
+        .then(response => {
+            console.log(JSON.parse(response.data.list_array));
+            setListsItems(JSON.parse(response.data.list_array));
+        })
+    }
 
     function handleSaveUnsave() {
         // setShowUnauth();
@@ -155,6 +165,7 @@ export default function Stats(props) {
         } else if (currentAccount){
             setSaved(!saved);
             toggleLists();
+            updateListsItems();  //function to axios get lists, save to state, and then render onto dropdown
         }
 
     }
@@ -221,8 +232,8 @@ export default function Stats(props) {
     }
 
     useEffect(() => {
-
-    }, [listsState])
+        console.log(listsItems)
+    }, [listsItems])
 
     return (
         <>
@@ -238,7 +249,7 @@ export default function Stats(props) {
             <Heading style={{textAlign: 'center'}} as='h4'>{props.data.name + ', ' + props.data._links['city:country'].name}</Heading>
                 <Dropdown toggle={handleSaveUnsave} isOpen={listsDropdownOpen} direction={'end'}>
                   <DropdownToggle caret>Add To List </DropdownToggle>
-                  {!listsState ?
+                  {listsItems === null || listsItems === false ?
                     <DropdownMenu >
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
                         <DropdownItem header style={{display:"flex", justifyContent:"space-evenly"}}>
@@ -254,14 +265,15 @@ export default function Stats(props) {
                         <DropdownItem onClick={toggleNewList}>Create A New List </DropdownItem>
                     </DropdownMenu>
                 
-:
+                    :
                     <DropdownMenu >
-                        <DropdownItem header>Your Lists</DropdownItem>
-                        {/* {
-                            listsState.map()
-                        } */}
+                        <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
+                        {
+                            Object.keys(listsItems).map(each => (
+                                <DropdownItem><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each}<IoIosAdd /></div></DropdownItem>  
+                            ))
+                        }
 
-                        <DropdownItem>{<div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>List One <IoIosAdd /></div>}</DropdownItem>  
                         {/* conditionally render this component <FcCheckmark /> if this city is added to this specific list */}
                         
                         
