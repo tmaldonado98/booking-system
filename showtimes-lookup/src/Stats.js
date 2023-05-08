@@ -39,6 +39,17 @@ export default function Stats(props) {
 
     const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount, listsItems, setListsItems} = useContext(MyContext);
 
+    ///set listsItems state to user account's data
+    useEffect(() => {
+        axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
+        {headers: {'Content-Type': 'application/json'}})
+        .then(response => {
+            console.log(JSON.parse(response.data.list_array));
+            setListsItems(JSON.parse(response.data.list_array));
+        })
+
+    }, [currentAccount])
+
     function setScoreFromSlug(){
         // console.log(slug)
         axios.get(`${slug._links['ua:scores'].href}`,
@@ -60,6 +71,8 @@ export default function Stats(props) {
         })
         .catch(error => console.log(error))
         }
+
+        // console.log(selectedGeo)
         
     }, [selectedGeo])
 
@@ -102,9 +115,12 @@ export default function Stats(props) {
     ///alert state
     const [visible, setVisible] = useState(false);
     const [changesSaved, setChangesSaved] = useState(false);
+    const [changesNotSaved, setChangesNotSaved] = useState(false);
+
 
     const onDismiss = () => setVisible(false);
     const onDismissChangesSaved = () => setChangesSaved((prevState) => !prevState);
+    const onDismissChangesNotSaved = () => setChangesNotSaved((prevState) => !prevState);
 
 
     function setShowUnauth() {
@@ -146,10 +162,8 @@ export default function Stats(props) {
 
     const toggleLists = () => setListsDropdownOpen((prevState) => !prevState);
 
-    // const [listItems, setListItems] = useState(null);
-
     function updateListsItems () {
-        axios.post('http://localhost/booking-system/retrieveLists.php', {email: currentAccount.email},
+        axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
         {headers: {'Content-Type': 'application/json'}})
         .then(response => {
             console.log(JSON.parse(response.data.list_array));
@@ -219,7 +233,7 @@ export default function Stats(props) {
     
     function createNewList () {
 
-        axios.post('http://localhost/booking-system/insertToLists.php', {listName: newListName, userEmail: currentAccount.email},
+        axios.post('http://localhost/backend-cities-lookup/insertToLists.php', {listName: newListName, userEmail: currentAccount.email},
         {headers: {'Content-Type':'application/json'}})
         .then(setNewListName(''))
         .then(response => console.log(response.data))
@@ -235,6 +249,29 @@ export default function Stats(props) {
         console.log(listsItems)
     }, [listsItems])
 
+    function savePlace(each){
+        axios.post('http://localhost/backend-cities-lookup/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: each, userEmail: currentAccount.email},
+        {headers: {'Content-Type':'application/json'}})
+        .then(response => {
+           if (response.data === false) {
+                //conditional to alert with 'unsuccessful' message
+                onDismissChangesNotSaved();
+                setTimeout(() => {
+                    setChangesNotSaved(false)
+                }, 7000);
+                console.log(response.data);
+            }
+            else {
+                //conditional to alert with 'successful' message
+                onDismissChangesSaved();
+                setTimeout(() => {
+                    setChangesSaved(false)
+                }, 7000)
+                console.log(response.data);
+            }
+        })
+    }
+
     return (
         <>
             <Alert color="info" isOpen={visible} toggle={onDismiss}>
@@ -245,12 +282,17 @@ export default function Stats(props) {
                 Your changes have been saved.
             </Alert>
 
+            <Alert color="danger" isOpen={changesNotSaved} toggle={onDismissChangesNotSaved}>
+                There was an error updating your changes.
+            </Alert>
+
+
         <div id='heading-w-bookmark'>
             <Heading style={{textAlign: 'center'}} as='h4'>{props.data.name + ', ' + props.data._links['city:country'].name}</Heading>
                 <Dropdown toggle={handleSaveUnsave} isOpen={listsDropdownOpen} direction={'end'}>
                   <DropdownToggle caret>Add To List </DropdownToggle>
-                  {listsItems === null || listsItems === false ?
-                    <DropdownMenu >
+                  {listsItems === null &&
+                    <DropdownMenu>
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
                         <DropdownItem header style={{display:"flex", justifyContent:"space-evenly"}}>
                             Loading...
@@ -265,22 +307,36 @@ export default function Stats(props) {
                         <DropdownItem onClick={toggleNewList}>Create A New List </DropdownItem>
                     </DropdownMenu>
                 
-                    :
-                    <DropdownMenu >
+                  }
+                  {/* Object.keys(listsItems).length === 0 */}
+                  {listsItems === false  &&
+                    <DropdownMenu>
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
-                        {
-                            Object.keys(listsItems).map(each => (
-                                <DropdownItem><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each}<IoIosAdd /></div></DropdownItem>  
-                            ))
-                        }
+                        <DropdownItem header style={{display:"flex", justifyContent:"space-evenly"}}>
+                            You have not created any lists yet  :(
 
-                        {/* conditionally render this component <FcCheckmark /> if this city is added to this specific list */}
-                        
-                        
+                        </DropdownItem>                       
                         <DropdownItem divider />
                         <DropdownItem onClick={toggleNewList}>Create A New List </DropdownItem>
                     </DropdownMenu>
-                }
+                  }
+                  {/* Object.keys(listsItems).length > 0 */}
+                    {listsItems !== null && listsItems !== false &&
+                    <DropdownMenu>
+                        <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
+                        {/* if city and country of selected place are the same as those of a place on a list, conditionally render list items.
+                            Disable and add checkmark. Otherwise, leave it enabled with + sign
+                        */}
+                        {/* conditionally render this component <FcCheckmark /> if this city is added to this specific list */}
+                        {
+                            Object.keys(listsItems).map(each => (
+                                <DropdownItem onClick={() => savePlace(each)}><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each}<IoIosAdd /></div></DropdownItem>  
+                            ))
+                        }                        
+                        <DropdownItem divider />
+                        <DropdownItem onClick={toggleNewList}>Create A New List </DropdownItem>
+                    </DropdownMenu>
+                    }
                 </Dropdown>
         </div>
 

@@ -7,7 +7,7 @@ function PrivateRoute({ component: Component, ...rest }) {
 
   useEffect(() => {
     // Make an axios request to check if the session exists
-    axios.get('http://localhost/booking-system/checkSession.php')
+    axios.get('http://localhost/backend-cities-lookup/checkSession.php')
     .then(response => {
         // If session exists, set authenticated to true
         if (response.data.status === 'success') {

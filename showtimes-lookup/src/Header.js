@@ -90,7 +90,7 @@ export default function Header (){
     }
     async function handleRegistration(){
         if (emailRegex.test(emailRegValue) === true && pswValid === true) {
-            await axios.post('http://localhost/booking-system/createAcct.php', {emailValue: emailRegValue, passwordValue: passwordRegValue, nameValue: nameRegValue},  
+            await axios.post('http://localhost/backend-cities-lookup/createAcct.php', {emailValue: emailRegValue, passwordValue: passwordRegValue, nameValue: nameRegValue},  
             {headers: {'Content-Type':'application/json'}})
             .then(response => {
                 setCurrentAccount(response.data);
@@ -141,14 +141,13 @@ export default function Header (){
 
     async function handleSignIn (address, pass){   ////POST user credentials to logIn.php .. Script checks if credentials are valid. If so, returns json object
         if (emailRegex.test(emailLogValue) === true && passwordLogValue.length > 0) {
-            await axios.post('http://localhost/booking-system/logIn.php', {email: address, password: pass},  
+            await axios.post('http://localhost/backend-cities-lookup/logIn.php', {email: address, password: pass},  
             {headers: {'Content-Type': 'application/json'}})
             ///If account does not exist in database, response from php as false; else send object
             .then(response => {
                 console.log(response.data);
                 setCurrentAccount(response.data);
             })
-            // .then(setCurrentAccount(null))
             .then(setEmailLogValue(''))
             .then(setPasswordLogValue(''))
             // .then(console.log('Logged in!'))
@@ -162,7 +161,7 @@ export default function Header (){
 
     useEffect(() => {
         if (currentAccount !== null && currentAccount !== false) {
-            console.log(currentAccount);
+            // console.log(currentAccount);
             console.log('Logged In!');
             // handleSignIn(currentAccount.email, currentAccount.password);
         }
@@ -170,14 +169,14 @@ export default function Header (){
             ///// STATE FOR ERROR MESSAGE IN MODAL
             console.log('User account does not exist in our records!')
         }
-        console.log(currentAccount)
+        // console.log(currentAccount)
     }, [currentAccount])
 
     function handleSignOut (){
-        axios.post('http://localhost/booking-system/destroySession.php',
+        axios.post('http://localhost/backend-cities-lookup/destroySession.php',
         {headers: {'Content-Type': 'application/json'}})
         .then(response => {
-          console.log(response.data); // will return 'Session destroyed'
+        //   console.log(response.data); // will return 'Session destroyed'
         })
         .then(setCurrentAccount(null))
         .then(setRegInvalid(null))
