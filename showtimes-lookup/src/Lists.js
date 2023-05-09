@@ -1,9 +1,11 @@
 import Header from "./Header";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import MyContext from "./Context";
 import { Heading, Button } from "@chakra-ui/react";
-import { Accordion, Spinner, Fade } from "reactstrap";
-// import {} from chakra;
+import { Accordion, Spinner, Fade, 
+    Modal, ModalHeader, ModalBody, ModalFooter, Input 
+} from "reactstrap";
+
 import { Link, useLocation, useNavigate} from 'react-router-dom';
 import {
     UncontrolledAccordion,
@@ -13,7 +15,7 @@ import {
   } from 'reactstrap';
 import './lists.css';
 import axios from "axios";
-
+import {BsGearFill} from 'react-icons/bs';
 
 function Lists () {
 
@@ -34,7 +36,48 @@ function Lists () {
         }
     }, [])
 
-    const [fade, setFade] = useState(false);
+    const [fade, setFade] = useState(null);
+    // const fadeRef = useRef(fade);
+
+    function handleGear (key){
+        if (fade === null) {
+            setFade(key)
+        } else if (fade !== null){
+            setFade(null)
+        }
+    }
+
+    const [modalEditList, setModalEditList] = useState(false);
+    const [edListName, setEdListName] = useState('');
+
+    const toggleEditList = () => {
+        setModalEditList(!modalEditList);
+        setEdListName('');
+    };
+   
+    function handleListName(event){
+        setEdListName(event.target.value);
+
+    }
+
+    function editListName(){
+        console.log('will send to php script to edit name in database');
+        toggleEditList();
+    }
+
+
+
+
+    const [modalDeleteList, setModalDeleteList] = useState(false);
+    const toggleDeleteList = () => {
+        setModalDeleteList(!modalDeleteList);
+    };
+
+    function deleteList(){
+        console.log('will send query to delete list from database');
+        toggleDeleteList();
+    }
+
 
     return (
         <section id='lists-section'>
@@ -86,14 +129,55 @@ function Lists () {
                             <AccordionHeader targetId={listsItems.indexOf(each)}><h4>{each.list_name}</h4></AccordionHeader>
                             {each.place ?
                             <AccordionBody accordionId={listsItems.indexOf(each)}>
-                                <Button onClick={function noRefCheck(){setFade(prevState => !prevState)}}>Edit Name</Button>
-                                <Fade
-                                    className="mt-3"
-                                    in={fade}
-                                    tag="h5"
-                                >
-                                    This content will fade in and out as the button is pressed
-                                </Fade>
+                                <Button onClick={() => handleGear(listsItems.indexOf(each))}><BsGearFill/></Button>
+                                    {fade === listsItems.indexOf(each) ?
+                                    <div className="container-gear-buttons">
+                                        <Button onClick={toggleEditList}>Edit List Name</Button><Button onClick={toggleDeleteList}>Delete List</Button>
+                                    
+                                    <Modal isOpen={modalEditList}>
+                                        <ModalHeader style={{justifyContent:'center'}}>Change List Name</ModalHeader>
+                                        <ModalBody>
+                                            <p style={{textAlign:'center'}}>Your List Is Currently Named: <h4>{each.list_name}</h4></p>
+                                            
+                                            <Input
+                                            placeholder={each.list_name}
+                                            onChange={handleListName}
+                                            >
+                                            </Input>
+                                        </ModalBody>
+                                        <ModalFooter style={{justifyContent:"center"}}>
+                                            <Button color="primary" onClick={editListName}>
+                                            
+                                                Set New Name
+                                            </Button>
+                                            <Button color="secondary" onClick={toggleEditList}>
+                                                Cancel
+                                            </Button>
+                                        </ModalFooter>
+                                    </Modal>
+
+
+                                    <Modal isOpen={modalDeleteList}>
+                                        <ModalHeader style={{justifyContent:'center'}}>Delete List</ModalHeader>
+                                        <ModalBody>
+                                            <p style={{textAlign:'center'}}>Are You Sure You Want To Delete Your List: <h4>{each.list_name}?</h4></p>
+                                        </ModalBody>
+                                        <ModalFooter style={{justifyContent:"center"}}>
+                                            <Button color="primary" onClick={deleteList}>
+                                            
+                                                Delete List
+                                            </Button>
+                                            <Button color="secondary" onClick={toggleDeleteList}>
+                                                Cancel
+                                            </Button>
+                                        </ModalFooter>
+                                    </Modal>
+
+                                    </div>
+
+                                    :
+                                    ''
+                                    }
                                 {<p>{each.place.map(item => (
                                     <p>{item.city +', ' + item.country}</p>
                                     )
