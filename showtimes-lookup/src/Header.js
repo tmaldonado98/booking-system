@@ -48,7 +48,7 @@ export default function Header (){
 
     const [registrationPosted, setRegistrationPosted] = useState(null);
 
-    const {currentAccount, setCurrentAccount} = useContext(MyContext);
+    const {currentAccount, setCurrentAccount, listsItems, setListsItems} = useContext(MyContext);
 
     //email regex pattern
     const emailRegex = /^([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
@@ -160,10 +160,15 @@ export default function Header (){
     }
 
     useEffect(() => {
-        if (currentAccount !== null && currentAccount !== false) {
-            // console.log(currentAccount);
+        if (currentAccount){
+            axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
+            {headers: {'Content-Type': 'application/json'}})
+            .then(response => {
+                console.log(JSON.parse(response.data.list_array));
+                setListsItems(JSON.parse(response.data.list_array));
+            })
+            // console.log(listsItems)
             console.log('Logged In!');
-            // handleSignIn(currentAccount.email, currentAccount.password);
         }
         else if (currentAccount === false){
             ///// STATE FOR ERROR MESSAGE IN MODAL
@@ -175,10 +180,11 @@ export default function Header (){
     function handleSignOut (){
         axios.post('http://localhost/backend-cities-lookup/destroySession.php',
         {headers: {'Content-Type': 'application/json'}})
-        .then(response => {
-        //   console.log(response.data); // will return 'Session destroyed'
-        })
+        // .then(response => {
+        // //   console.log(response.data); // will return 'Session destroyed'
+        // })
         .then(setCurrentAccount(null))
+        .then(setListsItems(null))
         .then(setRegInvalid(null))
         .then(setRegValid(null))
         .catch(error => {

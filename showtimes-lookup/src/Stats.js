@@ -39,16 +39,21 @@ export default function Stats(props) {
 
     const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount, listsItems, setListsItems} = useContext(MyContext);
 
-    ///set listsItems state to user account's data
-    useEffect(() => {
-        axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
-        {headers: {'Content-Type': 'application/json'}})
-        .then(response => {
-            console.log(JSON.parse(response.data.list_array));
-            setListsItems(JSON.parse(response.data.list_array));
-        })
-        // updateListsItems();
-    }, [currentAccount])
+    ///set listsItems state to user account's data ---- Migrated to header component
+    // useEffect(() => {
+    //     if (!currentAccount) {
+    //         // setShowUnauth();
+    //         return false;
+    //     } else if (currentAccount){
+    //         axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
+    //         {headers: {'Content-Type': 'application/json'}})
+    //         .then(response => {
+    //             console.log(JSON.parse(response.data.list_array));
+    //             setListsItems(JSON.parse(response.data.list_array));
+    //         })
+    //     }
+
+    // }, [currentAccount])
 
     useEffect(() => {
         console.log(listsItems)
@@ -312,8 +317,8 @@ export default function Stats(props) {
                     </DropdownMenu>
                 
                   }
-                  {/* Object.keys(listsItems).length === 0 */}
-                  {listsItems === '[]'  &&
+
+                  {listsItems === false || listsItems.length === 0  &&
                     <DropdownMenu>
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
                         <DropdownItem header style={{display:"flex", justifyContent:"space-evenly"}}>
@@ -325,7 +330,7 @@ export default function Stats(props) {
                     </DropdownMenu>
                   }
                   {/*  !== null && listsItems !== false */}
-                    {listsItems !== '[]' && listsItems !== null &&
+                    {listsItems.length !== 0 && listsItems !== null &&
                     <DropdownMenu>
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
                         {/* if city and country of selected place are the same as those of a place on a list, conditionally render list items.
@@ -337,7 +342,7 @@ export default function Stats(props) {
                                 <DropdownItem onClick={() => savePlace(each)}><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each.list_name}<IoIosAdd /></div></DropdownItem>  
                                 ))
                             }                        
-                            {/* {console.log(listsItems[0][])} */}
+
                         <DropdownItem divider />
                         <DropdownItem onClick={toggleNewList}>Create A New List </DropdownItem>
                     </DropdownMenu>

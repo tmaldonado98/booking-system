@@ -1,8 +1,9 @@
 import Header from "./Header";
 import { useContext, useEffect, useState } from "react";
 import MyContext from "./Context";
-import { Heading } from "@chakra-ui/react";
-import { Accordion, Button, Spinner } from "reactstrap";
+import { Heading, Button } from "@chakra-ui/react";
+import { Accordion, Spinner, Fade } from "reactstrap";
+// import {} from chakra;
 import { Link, useLocation, useNavigate} from 'react-router-dom';
 import {
     UncontrolledAccordion,
@@ -10,27 +11,30 @@ import {
     AccordionHeader,
     AccordionItem,
   } from 'reactstrap';
+import './lists.css';
+import axios from "axios";
 
 
 function Lists () {
 
     const {currentAccount, setCurrentAccount, listsItems, setListsItems} = useContext(MyContext);    
 
-    // const [activeAccordionId, setActiveAccordionId] = useState(null);
+    useEffect(() => {
+        if (!currentAccount) {
+            // setShowUnauth();
+            return false;
+        } else if (currentAccount){
+            axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
+            {headers: {'Content-Type': 'application/json'}})
+            .then(response => {
+                console.log(JSON.parse(response.data.list_array));
+                setListsItems(JSON.parse(response.data.list_array));
+            })
+            console.log(currentAccount)
+        }
+    }, [])
 
-    // const handleAccordionToggle = (accordionId) => {
-    //   setActiveAccordionId(activeAccordionId === accordionId ? null : accordionId);
-    // };
-
-    // useEffect(() => {
-    //     for (let i = 0; i < lists.length; i++) {
-    //         const element = array[i];
-            
-    //     }
-    //     console.log(listsItems[i][each])
-    // }, [listsItems])
-
-
+    const [fade, setFade] = useState(false);
 
     return (
         <section id='lists-section'>
@@ -50,10 +54,10 @@ function Lists () {
                 You Are Not Signed In!
             </Heading>
             <h4>
-                Head to the home page to browse without signing in
+                Sign in to create your own custom lists!
             </h4>
             <h4>
-                Sign in to create your own custom lists!
+                Head to the home page to browse without signing in
             </h4>
             <Link to='/'>
                 <Button>Home</Button>
@@ -63,8 +67,7 @@ function Lists () {
         }
 
         <div id="lists-container">
-        {/* Object.keys(listsItems).length === 00 */}
-            {listsItems === false &&
+            {listsItems === false || listsItems.length === 0 &&
                 <p> 
                     You have not created any lists yet  :(
                 </p>
@@ -75,16 +78,30 @@ function Lists () {
                 </p>
             }
             {listsItems !== null && listsItems !== false &&
-            <UncontrolledAccordion>
-                {/*  style={{display:'flex', justifyContent:'space-between', alignItems:'center'}} */}
-                {
+            <UncontrolledAccordion stayOpen>
+                
+                {listsItems.map(obj => obj.place) &&
                     listsItems.map(each => (
                         <AccordionItem>
-                            <AccordionHeader targetId='1'><h4>{each.list_name}</h4></AccordionHeader>
-                            <AccordionBody accordionId="1">
-                                {<p>{each.place.map(item => item.city)}, {each.place.map(item => item.country)}</p>}
-                                
+                            <AccordionHeader targetId={listsItems.indexOf(each)}><h4>{each.list_name}</h4></AccordionHeader>
+                            {each.place ?
+                            <AccordionBody accordionId={listsItems.indexOf(each)}>
+                                <Button onClick={function noRefCheck(){setFade(prevState => !prevState)}}>Edit Name</Button>
+                                <Fade
+                                    className="mt-3"
+                                    in={fade}
+                                    tag="h5"
+                                >
+                                    This content will fade in and out as the button is pressed
+                                </Fade>
+                                {<p>{each.place.map(item => (
+                                    <p>{item.city +', ' + item.country}</p>
+                                    )
+                                    )}</p>}
                             </AccordionBody>
+                            :
+                            <AccordionBody accordionId={listsItems.indexOf(each)}><p>You have not added any places to this list!</p></AccordionBody>
+                            }
                         </AccordionItem>
                     ))
                 }   
