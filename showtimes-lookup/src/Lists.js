@@ -78,16 +78,12 @@ function Lists () {
             <UncontrolledAccordion>
                 {/*  style={{display:'flex', justifyContent:'space-between', alignItems:'center'}} */}
                 {
-                    Object.keys(listsItems).map(each => (
+                    listsItems.map(each => (
                         <AccordionItem>
-                            <AccordionHeader targetId='1'><h4>{each}</h4></AccordionHeader>
+                            <AccordionHeader targetId='1'><h4>{each.list_name}</h4></AccordionHeader>
                             <AccordionBody accordionId="1">
-                                {/* <p>{each.city}</p> */}
-                                {<p>{listsItems[each].city}</p>}
+                                {<p>{each.place.map(item => item.city)}, {each.place.map(item => item.country)}</p>}
                                 
-                                {/* <p>{Object.values(listsItems.country)}</p> */}
-                                
-                                {/* .map(item => item) */}
                             </AccordionBody>
                         </AccordionItem>
                     ))

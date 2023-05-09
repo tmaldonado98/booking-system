@@ -17,10 +17,27 @@ function Main() {
   const [embeddedResults, setEmbeddedResults] = useState('');
   const [stockData, setStockData] = useState(null);
 
-  const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount} = useContext(MyContext);
+  const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount, listsItems, setListsItems} = useContext(MyContext);
   
   const [visibleSignIn, setVisibleSignIn] = useState(false);
   const [visibleSignOut, setVisibleSignOut] = useState(false);
+
+
+  useEffect(() => {
+    console.log(listsItems)
+  }, [])
+
+      ///set listsItems state to user account's data
+    //   useEffect(() => {
+    //     axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
+    //     {headers: {'Content-Type': 'application/json'}})
+    //     .then(response => {
+    //         console.log(JSON.parse(response.data.list_array));
+    //         setListsItems(JSON.parse(response.data.list_array));
+    //     })
+    // }, [currentAccount])
+
+
 
   const onDismissSignInAlert = () => setVisibleSignIn(false);
   const onDismissSignOut = () => setVisibleSignOut(false);

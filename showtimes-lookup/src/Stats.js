@@ -47,8 +47,12 @@ export default function Stats(props) {
             console.log(JSON.parse(response.data.list_array));
             setListsItems(JSON.parse(response.data.list_array));
         })
-
+        // updateListsItems();
     }, [currentAccount])
+
+    useEffect(() => {
+        console.log(listsItems)
+    }, [])
 
     function setScoreFromSlug(){
         // console.log(slug)
@@ -126,7 +130,6 @@ export default function Stats(props) {
     function setShowUnauth() {
         setVisible(true);
         setTimeout(() => {
-            // document.getElementById('unauth-msg').style('display, block');
             setVisible(false)
         }, 6000)
     }
@@ -249,8 +252,8 @@ export default function Stats(props) {
         console.log(listsItems)
     }, [listsItems])
 
-    function savePlace(each){
-        axios.post('http://localhost/backend-cities-lookup/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: each, userEmail: currentAccount.email},
+    function savePlace(name){
+        axios.post('http://localhost/backend-cities-lookup/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: name.list_name, userEmail: currentAccount.email, index: listsItems.indexOf(name)},
         {headers: {'Content-Type':'application/json'}})
         .then(response => {
            if (response.data === false) {
@@ -270,6 +273,7 @@ export default function Stats(props) {
                 console.log(response.data);
             }
         })
+        console.log('toList:' + name.list_name + ', index: ' + listsItems.indexOf(name))
     }
 
     return (
@@ -309,7 +313,7 @@ export default function Stats(props) {
                 
                   }
                   {/* Object.keys(listsItems).length === 0 */}
-                  {listsItems === false  &&
+                  {listsItems === '[]'  &&
                     <DropdownMenu>
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
                         <DropdownItem header style={{display:"flex", justifyContent:"space-evenly"}}>
@@ -320,8 +324,8 @@ export default function Stats(props) {
                         <DropdownItem onClick={toggleNewList}>Create A New List </DropdownItem>
                     </DropdownMenu>
                   }
-                  {/* Object.keys(listsItems).length > 0 */}
-                    {listsItems !== null && listsItems !== false &&
+                  {/*  !== null && listsItems !== false */}
+                    {listsItems !== '[]' && listsItems !== null &&
                     <DropdownMenu>
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
                         {/* if city and country of selected place are the same as those of a place on a list, conditionally render list items.
@@ -329,10 +333,11 @@ export default function Stats(props) {
                         */}
                         {/* conditionally render this component <FcCheckmark /> if this city is added to this specific list */}
                         {
-                            Object.keys(listsItems).map(each => (
-                                <DropdownItem onClick={() => savePlace(each)}><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each}<IoIosAdd /></div></DropdownItem>  
-                            ))
-                        }                        
+                            listsItems.map(each => (
+                                <DropdownItem onClick={() => savePlace(each)}><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each.list_name}<IoIosAdd /></div></DropdownItem>  
+                                ))
+                            }                        
+                            {/* {console.log(listsItems[0][])} */}
                         <DropdownItem divider />
                         <DropdownItem onClick={toggleNewList}>Create A New List </DropdownItem>
                     </DropdownMenu>
