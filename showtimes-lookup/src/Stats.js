@@ -246,17 +246,25 @@ export default function Stats(props) {
     }
     
     function createNewList () {
-
-        axios.post('http://localhost/backend-cities-lookup/insertToLists.php', {listName: newListName, userEmail: currentAccount.email},
-        {headers: {'Content-Type':'application/json'}})
-        .then(setNewListName(''))
-        .then(response => console.log(response.data))
-
-        onDismissChangesSaved();
-        setTimeout(() => {
-            setChangesSaved(false)
-        }, 7000)
-        toggleNewList();
+        if (newListName.length === 0) {
+            onDismissChangesNotSaved();
+            setTimeout(() => {
+                setChangesNotSaved(false)
+            }, 7000)
+            return false;
+        } else {
+            axios.post('http://localhost/backend-cities-lookup/insertToLists.php', {listName: newListName, userEmail: currentAccount.email},
+            {headers: {'Content-Type':'application/json'}})
+            .then(setNewListName(''))
+            .then(response => console.log(response.data))
+    
+            onDismissChangesSaved();
+            setTimeout(() => {
+                setChangesSaved(false)
+            }, 7000)
+            toggleNewList();
+            
+        }
     }
 
     useEffect(() => {
@@ -344,9 +352,27 @@ export default function Stats(props) {
                         */}
                         {/* conditionally render this component <FcCheckmark /> if this city is added to this specific list */}
                         {
+                                // {each.place.includes({city: each.place.map(item => item.city === props.data.name), country: each.place.map(item => item.city === props.data._links['city:country'].name)}) ?
                             listsItems.map(each => (
-                                <DropdownItem onClick={() => savePlace(each)}><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each.list_name}<IoIosAdd /></div></DropdownItem>  
-                                ))
+                                // <DropdownItem onClick={() => savePlace(each)}><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each.list_name}<IoIosAdd /></div></DropdownItem>  
+                                <>
+                                {each.hasOwnProperty('place') && each.place.some(prop => prop.city === props.data.name) && each.place.some(item => item.country === props.data._links['city:country'].name) === true && (
+                                    <DropdownItem disabled>
+                                        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                                            {each.list_name}<FcCheckmark />
+                                        </div>
+                                    </DropdownItem>
+                                )}
+                                {each.hasOwnProperty('place') && !each.place.some(prop => prop.city === props.data.name) && !each.place.some(item => item.country === props.data._links['city:country'].name) &&(
+                                    <DropdownItem onClick={() => savePlace(each)}><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each.list_name}<IoIosAdd /></div></DropdownItem>  
+
+                                )}
+                                {each.hasOwnProperty('place') === false &&(
+                                    <DropdownItem onClick={() => savePlace(each)}><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each.list_name}<IoIosAdd /></div></DropdownItem>  
+
+                                )}
+                                </>
+                            ))
                             }                        
 
                         <DropdownItem divider />
@@ -366,7 +392,7 @@ export default function Stats(props) {
                 </Input>
             </ModalBody>
             <ModalFooter style={{justifyContent:"center"}}>
-                <Button color="primary" onClick={createNewList}>
+                <Button color="primary" onClick={createNewList} disabled={newListName.length > 0 ? false : true}>
                     Create New List
                 </Button>
                 <Button color="secondary" onClick={toggleNewList}>

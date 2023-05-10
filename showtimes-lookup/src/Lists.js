@@ -1,9 +1,9 @@
 import Header from "./Header";
 import { useContext, useEffect, useRef, useState } from "react";
 import MyContext from "./Context";
-import { Heading, Button } from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/react";
 import { Accordion, Spinner, Fade, 
-    Modal, ModalHeader, ModalBody, ModalFooter, Input 
+    Modal, ModalHeader, ModalBody, ModalFooter, Input, Button 
 } from "reactstrap";
 
 import { Link, useLocation, useNavigate} from 'react-router-dom';
@@ -132,7 +132,7 @@ function Lists () {
                                 <Button onClick={() => handleGear(listsItems.indexOf(each))}><BsGearFill/></Button>
                                     {fade === listsItems.indexOf(each) ?
                                     <div className="container-gear-buttons">
-                                        <Button onClick={toggleEditList}>Edit List Name</Button><Button onClick={toggleDeleteList}>Delete List</Button>
+                                        <Button onClick={toggleEditList} color="primary" outline>Edit List Name</Button><Button onClick={toggleDeleteList} color="primary" outline>Delete List</Button>
                                     
                                     <Modal isOpen={modalEditList}>
                                         <ModalHeader style={{justifyContent:'center'}}>Change List Name</ModalHeader>
@@ -146,11 +146,11 @@ function Lists () {
                                             </Input>
                                         </ModalBody>
                                         <ModalFooter style={{justifyContent:"center"}}>
-                                            <Button color="primary" onClick={editListName}>
+                                            <Button color="primary" outline onClick={editListName}  disabled={edListName.length > 0 ? false : true}>
                                             
                                                 Set New Name
                                             </Button>
-                                            <Button color="secondary" onClick={toggleEditList}>
+                                            <Button color="secondary" outline onClick={toggleEditList}>
                                                 Cancel
                                             </Button>
                                         </ModalFooter>
@@ -163,11 +163,11 @@ function Lists () {
                                             <p style={{textAlign:'center'}}>Are You Sure You Want To Delete Your List: <h4>{each.list_name}?</h4></p>
                                         </ModalBody>
                                         <ModalFooter style={{justifyContent:"center"}}>
-                                            <Button color="primary" onClick={deleteList}>
+                                            <Button color="danger" outline onClick={deleteList}>
                                             
                                                 Delete List
                                             </Button>
-                                            <Button color="secondary" onClick={toggleDeleteList}>
+                                            <Button color="secondary" outline onClick={toggleDeleteList}>
                                                 Cancel
                                             </Button>
                                         </ModalFooter>
@@ -184,7 +184,57 @@ function Lists () {
                                     )}</p>}
                             </AccordionBody>
                             :
-                            <AccordionBody accordionId={listsItems.indexOf(each)}><p>You have not added any places to this list!</p></AccordionBody>
+
+                            <AccordionBody accordionId={listsItems.indexOf(each)}>
+                                <Button onClick={() => handleGear(listsItems.indexOf(each))}><BsGearFill/></Button>
+                                    {fade === listsItems.indexOf(each) &&
+                                    
+                                    <div className="container-gear-buttons">
+                                        <Button onClick={toggleEditList} color="primary" outline>Edit List Name</Button><Button onClick={toggleDeleteList} color="primary" outline>Delete List</Button>
+                                    
+                                    <Modal isOpen={modalEditList}>
+                                        <ModalHeader style={{justifyContent:'center'}}>Change List Name</ModalHeader>
+                                        <ModalBody>
+                                            <p style={{textAlign:'center'}}>Your List Is Currently Named: <h4>{each.list_name}</h4></p>
+                                            
+                                            <Input
+                                            placeholder={each.list_name}
+                                            onChange={handleListName}
+                                            >
+                                            </Input>
+                                        </ModalBody>
+                                        <ModalFooter style={{justifyContent:"center"}}>
+                                            <Button color="primary" outline onClick={editListName}  disabled={edListName.length > 0 ? false : true}>
+                                            
+                                                Set New Name
+                                            </Button>
+                                            <Button color="secondary" outline onClick={toggleEditList}>
+                                                Cancel
+                                            </Button>
+                                        </ModalFooter>
+                                    </Modal>
+
+
+                                    <Modal isOpen={modalDeleteList}>
+                                        <ModalHeader style={{justifyContent:'center'}}>Delete List</ModalHeader>
+                                        <ModalBody>
+                                            <p style={{textAlign:'center'}}>Are You Sure You Want To Delete Your List: <h4>{each.list_name}?</h4></p>
+                                        </ModalBody>
+                                        <ModalFooter style={{justifyContent:"center"}}>
+                                            <Button color="danger" outline onClick={deleteList}>
+                                            
+                                                Delete List
+                                            </Button>
+                                            <Button color="secondary" outline onClick={toggleDeleteList}>
+                                                Cancel
+                                            </Button>
+                                        </ModalFooter>
+                                    </Modal>
+                                    </div>
+                                    }
+                                <p>You have not added any places to this list!</p>
+                                
+                            </AccordionBody>
                             }
                         </AccordionItem>
                     ))
