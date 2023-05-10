@@ -16,6 +16,7 @@ import {
 import './lists.css';
 import axios from "axios";
 import {BsGearFill} from 'react-icons/bs';
+import {IoMdRemove} from 'react-icons/io';
 
 function Lists () {
 
@@ -78,7 +79,17 @@ function Lists () {
         toggleDeleteList();
     }
 
+    const [modalDeleteItem, setModalDeleteItem] = useState(false);
+    const toggleDeleteItem = (city, country) => {
+        setModalDeleteItem(city+country);
+    };
+    
 
+    function deleteListItem(city, country, list){
+        console.log('will send axios post to php script to delete this object from place array for this specific list.')
+        console.log(city, country, list);
+        setModalDeleteItem('');
+    }
     return (
         <section id='lists-section'>
         {currentAccount && 
@@ -129,7 +140,9 @@ function Lists () {
                             <AccordionHeader targetId={listsItems.indexOf(each)}><h4>{each.list_name}</h4></AccordionHeader>
                             {each.place ?
                             <AccordionBody accordionId={listsItems.indexOf(each)}>
-                                <Button onClick={() => handleGear(listsItems.indexOf(each))}><BsGearFill/></Button>
+                                <div style={{display:'flex', justifyContent:'start'}}>
+                                    <Button outline color="dark" onClick={() => handleGear(listsItems.indexOf(each))}><BsGearFill/></Button>
+                                </div>
                                     {fade === listsItems.indexOf(each) ?
                                     <div className="container-gear-buttons">
                                         <Button onClick={toggleEditList} color="primary" outline>Edit List Name</Button><Button onClick={toggleDeleteList} color="primary" outline>Delete List</Button>
@@ -178,10 +191,32 @@ function Lists () {
                                     :
                                     ''
                                     }
-                                {<p>{each.place.map(item => (
-                                    <p>{item.city +', ' + item.country}</p>
-                                    )
-                                    )}</p>}
+                                {
+                                    <ul>{each.place.map(item => (
+                                    <>
+                                    <li>{item.city +', ' + item.country} <Button style={{borderRadius:'30px'}} onClick={() => toggleDeleteItem(item.city, item.country)} outline color="danger" size="sm" ><IoMdRemove/></Button></li>
+                                    
+                                    
+                                    <Modal isOpen={modalDeleteItem === item.city+item.country ? true : false}>
+                                        <ModalHeader style={{justifyContent:'center'}}>Delete <strong>{item.city + ', ' + item.country}</strong>?</ModalHeader>
+                                        <ModalBody>
+                                            <p style={{textAlign:'center'}}>Are You Sure You Want To Delete <strong>{item.city + ', ' + item.country}</strong> From Your List?</p>
+                                        </ModalBody>
+                                        <ModalFooter style={{justifyContent:"center"}}>
+                                            <Button color="danger" outline onClick={() => deleteListItem(item.city, item.country, each.list_name)}>
+                                            
+                                                Delete Item
+                                            </Button>
+                                            <Button color="secondary" outline onClick={() => setModalDeleteItem('')}>
+                                                Cancel
+                                            </Button>
+                                        </ModalFooter>
+                                    </Modal>
+                                    </>)
+                                    )}</ul>
+                                    
+                                    }
+                                    
                             </AccordionBody>
                             :
 
