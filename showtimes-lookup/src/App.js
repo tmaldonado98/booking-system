@@ -10,7 +10,7 @@ export default function App() {
     const [selectedPlace, setSelectedPlace] = useState(false);
     const [selectedGeo, setSelectedGeo] = useState('');
     const [mapCreated, setMapCreated] = useState(false); //context
-    const [listsItems, setListsItems] = useState(null);
+    const [listsItems, setListsItems] = useState(false);
 
 
 return(

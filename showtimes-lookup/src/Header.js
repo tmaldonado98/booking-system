@@ -184,7 +184,7 @@ export default function Header (){
         // //   console.log(response.data); // will return 'Session destroyed'
         // })
         .then(setCurrentAccount(null))
-        .then(setListsItems(null))
+        .then(setListsItems(false))
         .then(setRegInvalid(null))
         .then(setRegValid(null))
         .catch(error => {

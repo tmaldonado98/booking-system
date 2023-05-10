@@ -24,7 +24,8 @@ function Main() {
 
 
   useEffect(() => {
-    console.log(listsItems)
+    console.log(listsItems);
+    console.log(currentAccount)
   }, [])
 
       ///set listsItems state to user account's data
@@ -70,19 +71,17 @@ useEffect(() => {
 
 
   useEffect(() => {
-    // () =>{
       axios.get(`https://api.teleport.org/api/cities/?search=${text}`,
       {headers: {'Content-Type': 'application/json'}})
       .then(response => {
         setStockData(response.data._embedded["city:search-results"])
       })
       .catch(error => console.log(error));
-    // }
   }, [])
 
-    useEffect(() => {
-      // console.log(stockData);
-    }, [stockData])
+    // useEffect(() => {
+    //   // console.log(stockData);
+    // }, [stockData])
 
     function handleChange(event){
       setText(event.target.value);
@@ -103,11 +102,11 @@ useEffect(() => {
   }
   
 
-  useEffect(() => {
-    // console.log(cityData);
-    // console.log(embeddedResults);
+  // useEffect(() => {
+  //   // console.log(cityData);
+  //   // console.log(embeddedResults);
 
-  }, [cityData])
+  // }, [cityData])
   
 
   function capitalizeFirstLetter(str) {
@@ -130,9 +129,9 @@ useEffect(() => {
     }
   }
 
-  useEffect(() => {
-    // console.log(selectedGeo)
-  }, [selectedGeo])
+  // useEffect(() => {
+  //   // console.log(selectedGeo)
+  // }, [selectedGeo])
 
 
   return (

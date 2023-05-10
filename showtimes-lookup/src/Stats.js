@@ -55,9 +55,10 @@ export default function Stats(props) {
 
     // }, [currentAccount])
 
-    useEffect(() => {
-        console.log(listsItems)
-    }, [])
+    // useEffect(() => {
+    //     console.log(listsItems);
+    //     console.log(currentAccount);
+    // }, [])
 
     function setScoreFromSlug(){
         // console.log(slug)
@@ -171,12 +172,17 @@ export default function Stats(props) {
     const toggleLists = () => setListsDropdownOpen((prevState) => !prevState);
 
     function updateListsItems () {
-        axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
-        {headers: {'Content-Type': 'application/json'}})
-        .then(response => {
-            console.log(JSON.parse(response.data.list_array));
-            setListsItems(JSON.parse(response.data.list_array));
-        })
+        if (!currentAccount) {
+            return false;
+        } else if (currentAccount){
+            axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
+            {headers: {'Content-Type': 'application/json'}})
+            .then(response => {
+                console.log(JSON.parse(response.data.list_array));
+                setListsItems(JSON.parse(response.data.list_array));
+            })
+        }
+
     }
 
     function handleSaveUnsave() {
@@ -300,7 +306,7 @@ export default function Stats(props) {
             <Heading style={{textAlign: 'center'}} as='h4'>{props.data.name + ', ' + props.data._links['city:country'].name}</Heading>
                 <Dropdown toggle={handleSaveUnsave} isOpen={listsDropdownOpen} direction={'end'}>
                   <DropdownToggle caret>Add To List </DropdownToggle>
-                  {listsItems === null &&
+                  {!listsItems &&
                     <DropdownMenu>
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
                         <DropdownItem header style={{display:"flex", justifyContent:"space-evenly"}}>
@@ -329,8 +335,8 @@ export default function Stats(props) {
                         <DropdownItem onClick={toggleNewList}>Create A New List </DropdownItem>
                     </DropdownMenu>
                   }
-                  {/*  !== null && listsItems !== false */}
-                    {listsItems.length !== 0 && listsItems !== null &&
+
+                    {listsItems.length !== 0 && listsItems !== false &&
                     <DropdownMenu>
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
                         {/* if city and country of selected place are the same as those of a place on a list, conditionally render list items.
