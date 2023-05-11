@@ -257,12 +257,19 @@ export default function Stats(props) {
             {headers: {'Content-Type':'application/json'}})
             .then(setNewListName(''))
             .then(response => console.log(response.data))
+            .then(
+                onDismissChangesSaved(),
+                setTimeout(() => {
+                    setChangesSaved(false)
+                }, 7000),
+                toggleNewList()
+            )
+            .catch(error => {
+                console.error('Error: ' + error);
+                onDismissChangesNotSaved();
+            })
     
-            onDismissChangesSaved();
-            setTimeout(() => {
-                setChangesSaved(false)
-            }, 7000)
-            toggleNewList();
+
             
         }
     }
@@ -275,7 +282,8 @@ export default function Stats(props) {
         axios.post('http://localhost/backend-cities-lookup/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: name.list_name, userEmail: currentAccount.email, index: listsItems.indexOf(name)},
         {headers: {'Content-Type':'application/json'}})
         .then(response => {
-           if (response.data === false) {
+            console.log(response.data)
+           if (response.data !== true) {
                 //conditional to alert with 'unsuccessful' message
                 onDismissChangesNotSaved();
                 setTimeout(() => {
@@ -283,7 +291,7 @@ export default function Stats(props) {
                 }, 7000);
                 console.log(response.data);
             }
-            else {
+            else if (response.data === true){
                 //conditional to alert with 'successful' message
                 onDismissChangesSaved();
                 setTimeout(() => {
@@ -291,6 +299,13 @@ export default function Stats(props) {
                 }, 7000)
                 console.log(response.data);
             }
+        })
+        .catch(error => {
+            console.log(error);
+            onDismissChangesNotSaved();
+            setTimeout(() => {
+                setChangesNotSaved(false)
+            }, 7000);
         })
         console.log('toList:' + name.list_name + ', index: ' + listsItems.indexOf(name))
     }

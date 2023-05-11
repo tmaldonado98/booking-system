@@ -25,6 +25,10 @@ function ApiCards (props) {
         .then(setSelectedPlace(true))
         .then(setMapCreated(false))
         .catch(error => console.log(error));
+        window.scrollTo({
+            top: 350,
+            behavior: "smooth"
+          });
     }
 
 

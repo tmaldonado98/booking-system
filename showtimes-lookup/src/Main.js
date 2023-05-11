@@ -137,13 +137,7 @@ useEffect(() => {
   return (
     <> 
       <Header />
-      <Alert color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
-                You have successfully signed in!
-            </Alert>
 
-            <Alert color="primary" isOpen={visibleSignOut} toggle={onDismissSignOut}>
-                You have successfully signed out.
-            </Alert>
       <section>
         <motion.div id='container-location'
           animate={{x: isAnimated && '25vw', y: isAnimated && '-15vh', width: isAnimated && '30%'}}
@@ -157,7 +151,13 @@ useEffect(() => {
           </div>        
 
         </motion.div>
+            <Alert color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
+                You have successfully signed in!
+            </Alert>
 
+            <Alert color="primary" isOpen={visibleSignOut} toggle={onDismissSignOut}>
+                You have successfully signed out.
+            </Alert>
         {selectedPlace === false ?
         <div id='search-results'>
           {/* {console.log(embeddedResults)} */}

@@ -384,10 +384,10 @@ export default function Header (){
                 {/* <Location /> */}
             </nav>
         </section>
-        <Heading as='h2'>
+        {/* <Heading as='h2'>
 
                 *** Page is still under construction!! ***
-        </Heading>
+        </Heading> */}
     </>    
     );
 }

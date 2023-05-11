@@ -5,7 +5,6 @@ import { Heading } from "@chakra-ui/react";
 import { Accordion, Spinner, Fade, 
     Modal, ModalHeader, ModalBody, ModalFooter, Input, Button 
 } from "reactstrap";
-
 import { Link, useLocation, useNavigate} from 'react-router-dom';
 import {
     UncontrolledAccordion,
@@ -22,7 +21,7 @@ function Lists () {
 
     const {currentAccount, setCurrentAccount, listsItems, setListsItems} = useContext(MyContext);    
 
-    useEffect(() => {
+    function loadListNames(){
         if (!currentAccount) {
             // setShowUnauth();
             return false;
@@ -35,7 +34,16 @@ function Lists () {
             })
             console.log(currentAccount)
         }
+
+    };
+
+    useEffect(() => {
+        loadListNames();
     }, [])
+
+    // useEffect(() => {
+    //     loadListNames();
+    // }, [listsItems])
 
     const [fade, setFade] = useState(null);
     // const fadeRef = useRef(fade);
@@ -61,9 +69,18 @@ function Lists () {
 
     }
 
-    function editListName(){
-        console.log('will send to php script to edit name in database');
-        toggleEditList();
+    function editListName(currentListName, listIndex){
+        // console.log('will send to php script to edit name in database');
+        axios.post('http://localhost/backend-cities-lookup/editListName.php', {updatedListName: edListName, toList: currentListName, userEmail: currentAccount.email, index: listIndex},
+        {headers: {'Content-Type': 'application/json'}})
+        .then(response => {
+            console.log(response);
+            loadListNames();
+            toggleEditList();
+            handleGear(listIndex);
+        })
+
+        .catch(error => console.log(error));
     }
 
 
@@ -90,12 +107,18 @@ function Lists () {
         console.log(city, country, list);
         setModalDeleteItem('');
     }
+
+
+    // function defineRouteGeo(city, country){
+
+    // }
+
     return (
         <section id='lists-section'>
         {currentAccount && 
         <>
             <Header />
-            <Heading>
+            <Heading style={{textAlign:'center'}}>
                 {currentAccount.name + "'s Lists"}
             </Heading>
         </>
@@ -159,7 +182,7 @@ function Lists () {
                                             </Input>
                                         </ModalBody>
                                         <ModalFooter style={{justifyContent:"center"}}>
-                                            <Button color="primary" outline onClick={editListName}  disabled={edListName.length > 0 ? false : true}>
+                                            <Button color="primary" outline onClick={() => editListName(each.list_name, listsItems.indexOf(each))}  disabled={edListName.length > 0 ? false : true}>
                                             
                                                 Set New Name
                                             </Button>
@@ -194,9 +217,8 @@ function Lists () {
                                 {
                                     <ul>{each.place.map(item => (
                                     <>
-                                    <li>{item.city +', ' + item.country} <Button style={{borderRadius:'30px'}} onClick={() => toggleDeleteItem(item.city, item.country)} outline color="danger" size="sm" ><IoMdRemove/></Button></li>
-                                    
-                                    
+                                    <li><strong>{item.city +', ' + item.country}</strong><Button style={{borderRadius:'30px'}} onClick={() => toggleDeleteItem(item.city, item.country)} outline color="danger" size="sm" ><IoMdRemove/></Button></li>
+                                                                       
                                     <Modal isOpen={modalDeleteItem === item.city+item.country ? true : false}>
                                         <ModalHeader style={{justifyContent:'center'}}>Delete <strong>{item.city + ', ' + item.country}</strong>?</ModalHeader>
                                         <ModalBody>
@@ -239,7 +261,7 @@ function Lists () {
                                             </Input>
                                         </ModalBody>
                                         <ModalFooter style={{justifyContent:"center"}}>
-                                            <Button color="primary" outline onClick={editListName}  disabled={edListName.length > 0 ? false : true}>
+                                            <Button color="primary" outline onClick={() => editListName(each.list_name)}  disabled={edListName.length > 0 ? false : true}>
                                             
                                                 Set New Name
                                             </Button>

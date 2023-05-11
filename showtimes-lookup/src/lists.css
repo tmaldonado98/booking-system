@@ -6,7 +6,7 @@
 .container-gear-buttons {
     display: flex;
     justify-content: start;
-    margin: auto;
+    margin: 12px auto;
     width: 100%;
     gap: 24px;
 }
