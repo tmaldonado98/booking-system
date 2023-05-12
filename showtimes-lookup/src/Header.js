@@ -221,7 +221,7 @@ export default function Header (){
                 <h6 style={{margin:'0'}}>
                     Sign In To Create Your Own Custom Lists Of Countries!
                 </h6>
-                <p style={{color:'ivory', margin:'0'}}><a href='https://tomasmaldonado.rf.gd' title='Tomas Maldonado Portfolio Website' target='_blank'>Page Creator</a></p>
+                <p style={{color:'ivory', margin:'0'}}><a href='https://tomasmaldonado.rf.gd' title='Tomas Maldonado Portfolio Website' target='_blank'><u>Page Creator</u></a></p>
             </div>
         
             <Modal isOpen={modal} toggle={toggle}>
@@ -348,6 +348,8 @@ export default function Header (){
                 </Link>
                 }
                 <h5>Welcome, {currentAccount.name}!</h5>
+                <p style={{color:'ivory', margin:'0'}}><a href='https://tomasmaldonado.rf.gd' title='Tomas Maldonado Portfolio Website' target='_blank'>Page Creator</a></p>
+
             </div>
             <div>
 
@@ -380,20 +382,17 @@ export default function Header (){
                     Ever wondered what it would be like to live in other cities? <br/>
                     Look no further! Type in the name of a city and CityLookup will show you...
                 </Heading>
+                {currentAccount === null &&
                 <h4>
                     Create lists of your favorite places! <br/>
                     Create an account and sign in! <br/>
-                    Alternatively, you can use our demo account.
+                    Alternatively, you can use our <strong>demo account</strong>.
                 </h4>
+                }
             </nav>
-            <nav>
-                {/* <Location /> */}
-            </nav>
-        </section>
-        {/* <Heading as='h2'>
 
-                *** Page is still under construction!! ***
-        </Heading> */}
+        </section>
+
     </>    
     );
 }

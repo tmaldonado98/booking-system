@@ -192,7 +192,7 @@ export default function Stats(props) {
             setShowUnauth();
         } else if (currentAccount){
             setSaved(!saved);
-            // toggleLists();
+            toggleLists();
             updateListsItems();  //function to axios get lists, save to state, and then render onto dropdown
         }
 
@@ -245,7 +245,10 @@ export default function Stats(props) {
         setNewListName(event.target.value);
     }
     
-    function createNewList () {
+    let mutableInd = 0;
+
+    function createNewList (ind) {
+        console.log(ind);
         if (newListName.length === 0) {
             onDismissChangesNotSaved();
             setTimeout(() => {
@@ -263,17 +266,24 @@ export default function Stats(props) {
                     setChangesSaved(false)
                 }, 7000),
                 toggleNewList(),
-                updateListsItems()
+                updateListsItems(),
+                )
+            .then( ///This function adds the selected place to the newly created list when create new list button is clicked.
+                setTimeout(()=>{
+                    savePlaceAuto(ind)
+                }, 2000)
             )
+            
             .catch(error => {
                 console.error('Error: ' + error);
                 onDismissChangesNotSaved();
             })
-    
 
             
-        }
+        } // end of else block
+
     }
+
 
     useEffect(() => {
         console.log(listsItems)
@@ -313,6 +323,40 @@ export default function Stats(props) {
         console.log('toList:' + name.list_name + ', index: ' + listsItems.indexOf(name))
     }
 
+    function savePlaceAuto(name){
+        axios.post('http://localhost/backend-cities-lookup/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: name.list_name, userEmail: currentAccount.email, index: listsItems.indexOf(name)+1},
+        {headers: {'Content-Type':'application/json'}})
+        .then(response => {
+            console.log(response.data)
+           if (response.data !== true) {
+                //conditional to alert with 'unsuccessful' message
+                onDismissChangesNotSaved();
+                setTimeout(() => {
+                    setChangesNotSaved(false)
+                }, 7000);
+                console.log(response.data);
+            }
+            else if (response.data === true){
+                //conditional to alert with 'successful' message
+                onDismissChangesSaved();
+                setTimeout(() => {
+                    setChangesSaved(false)
+                }, 7000)
+                console.log(response.data);
+                updateListsItems();
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            onDismissChangesNotSaved();
+            setTimeout(() => {
+                setChangesNotSaved(false)
+            }, 7000);
+        })
+        console.log('toList:' + name.list_name + ', index: ' + listsItems.indexOf(name))
+
+    }
+
     return (
         <>
             <Alert color="info" isOpen={visible} toggle={onDismiss}>
@@ -331,7 +375,8 @@ export default function Stats(props) {
         <div id='heading-w-bookmark'>
             <Heading style={{textAlign: 'center'}} as='h4'>{props.data.name + ', ' + props.data._links['city:country'].name}</Heading>
                 <Dropdown toggle={handleSaveUnsave} isOpen={listsDropdownOpen} direction={'end'}>
-                  <DropdownToggle caret onClick={() => setListsDropdownOpen(prevState => !prevState)}>Add To List </DropdownToggle>
+                  <DropdownToggle caret >Add To List </DropdownToggle>
+                  {/* onClick={toggleLists} */}
                   {!listsItems &&
                     <DropdownMenu>
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
@@ -365,14 +410,8 @@ export default function Stats(props) {
                     {listsItems.length !== 0 && listsItems !== false &&
                     <DropdownMenu>
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>
-                        {/* if city and country of selected place are the same as those of a place on a list, conditionally render list items.
-                            Disable and add checkmark. Otherwise, leave it enabled with + sign
-                        */}
-                        {/* conditionally render this component <FcCheckmark /> if this city is added to this specific list */}
                         {
-                                // {each.place.includes({city: each.place.map(item => item.city === props.data.name), country: each.place.map(item => item.city === props.data._links['city:country'].name)}) ?
                             listsItems.map(each => (
-                                // <DropdownItem onClick={() => savePlace(each)}><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each.list_name}<IoIosAdd /></div></DropdownItem>  
                                 <>
                                 {each.hasOwnProperty('place') && each.place.some(prop => prop.city === props.data.name) && each.place.some(item => item.country === props.data._links['city:country'].name) === true && (
                                     <DropdownItem disabled>
@@ -389,6 +428,24 @@ export default function Stats(props) {
                                     <DropdownItem onClick={() => savePlace(each)}><div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>{each.list_name}<IoIosAdd /></div></DropdownItem>  
 
                                 )}
+                                    <Modal isOpen={modalNewList}>
+                                        <ModalHeader>Create a new list</ModalHeader>
+                                        <ModalBody>
+                                            <Input
+                                            placeholder='Name your list'
+                                            onChange={handleListName}
+                                            >
+                                            </Input>
+                                        </ModalBody>
+                                        <ModalFooter style={{justifyContent:"center"}}>
+                                            <Button color="primary" onClick={() => createNewList(each)} disabled={newListName.length > 0 ? false : true}>
+                                                Create New List
+                                            </Button>
+                                            <Button color="secondary" onClick={toggleNewList}>
+                                                Cancel
+                                            </Button>
+                                        </ModalFooter>
+                                    </Modal>
                                 </>
                             ))
                             }                        
@@ -400,24 +457,7 @@ export default function Stats(props) {
                 </Dropdown>
         </div>
 
-        <Modal isOpen={modalNewList}>
-            <ModalHeader>Create a new list</ModalHeader>
-            <ModalBody>
-                <Input
-                placeholder='Name your list'
-                onChange={handleListName}
-                >
-                </Input>
-            </ModalBody>
-            <ModalFooter style={{justifyContent:"center"}}>
-                <Button color="primary" onClick={createNewList} disabled={newListName.length > 0 ? false : true}>
-                    Create New List
-                </Button>
-                <Button color="secondary" onClick={toggleNewList}>
-                    Cancel
-                </Button>
-            </ModalFooter>
-        </Modal>
+
 
 
             <div id='img-w-summary'>
@@ -430,7 +470,7 @@ export default function Stats(props) {
                 <div className='individual-divs'>
                     {/* <p style={{margin:0}}>0<span>00</span></p> */}
                     <u><p style={{textAlign:'center'}}>Source: <a href='https://teleport.org/cities/' target='_blank' rel='noreferrer noopener'>Teleport</a></p></u>
-                    <Progress style={{opacity: 0}} value={0}/>
+                    <Progress style={{opacity: 0, display: 'none'}} value={0}/>
                 </div>
 
                 {scores !== null &&

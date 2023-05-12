@@ -53,9 +53,9 @@ function Main() {
 
 function setShowSignOut() {
     setVisibleSignOut(true);
-    setTimeout(() => {
-        setVisibleSignOut(false)
-    }, 6000)
+    // setTimeout(() => {
+    //     setVisibleSignOut(false)
+    // }, 6000)
 }
 
 
@@ -153,11 +153,11 @@ useEffect(() => {
             </Button>
           </div>        
         </motion.div>
-            <Alert color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
+            <Alert className='auth-alert' color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
                 You have successfully signed in!
             </Alert>
 
-            <Alert color="primary" isOpen={visibleSignOut} toggle={onDismissSignOut}>
+            <Alert className='auth-alert' color="primary" isOpen={visibleSignOut} toggle={onDismissSignOut}>
                 You have successfully signed out.
             </Alert>
         {selectedPlace === false ?
@@ -170,10 +170,13 @@ useEffect(() => {
         }
 
 
-        <div id='selected-place'>
-          {selectedGeo !== '' && <Stats data={selectedGeo} />}
-        </div>
-
+          {selectedGeo !== '' ? 
+            <div id='selected-place'>
+              <Stats data={selectedGeo} />
+            </div>
+          :
+            <div id='selected-place' style={{display: 'none'}}></div>
+          }
       </>
 
       <section id='stock-container'>
@@ -182,10 +185,7 @@ useEffect(() => {
           {stockData ? stockData.map(each => <ApiCards dataStock={stockData} cardData={each.matching_full_name} fullData={each}/>) : ''}
         </div>
       </section>
-      <main>
 
-      
-      </main>
       
     </>
   );

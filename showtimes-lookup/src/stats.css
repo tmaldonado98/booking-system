@@ -17,6 +17,7 @@
     display: none;
 }
 
+
 .chart {
     /* display: flex;
     flex-direction: column; */
@@ -59,6 +60,11 @@ li {
 .accordion-content li p {
     font-weight: bold;
     margin: 0;
+}
+
+.accordion-item {
+    background-color: #00000012;
+    border-bottom: 1px black outset;
 }
 
 #map-accordion{
