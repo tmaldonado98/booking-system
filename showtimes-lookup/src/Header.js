@@ -218,9 +218,10 @@ export default function Header (){
         <>       
             <div className='nav-buttons'>
                 <Button onClick={toggle}>Sign In/Create Account</Button>
-                <h6>
+                <h6 style={{margin:'0'}}>
                     Sign In To Create Your Own Custom Lists Of Countries!
                 </h6>
+                <p style={{color:'ivory', margin:'0'}}><a href='https://tomasmaldonado.rf.gd' title='Tomas Maldonado Portfolio Website' target='_blank'>Page Creator</a></p>
             </div>
         
             <Modal isOpen={modal} toggle={toggle}>
@@ -379,6 +380,11 @@ export default function Header (){
                     Ever wondered what it would be like to live in other cities? <br/>
                     Look no further! Type in the name of a city and CityLookup will show you...
                 </Heading>
+                <h4>
+                    Create lists of your favorite places! <br/>
+                    Create an account and sign in! <br/>
+                    Alternatively, you can use our demo account.
+                </h4>
             </nav>
             <nav>
                 {/* <Location /> */}

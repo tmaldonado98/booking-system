@@ -91,27 +91,57 @@ function Lists () {
         setModalDeleteList(!modalDeleteList);
     };
 
-    function deleteList(){
-        console.log('will send query to delete list from database');
-        toggleDeleteList();
+    function deleteList(listIndex){
+        axios.post('http://localhost/backend-cities-lookup/deleteList.php', {index: listIndex, userEmail: currentAccount.email},
+        {headers: {'Content-Type': 'application/json'}})
+        .then(response => {
+            console.log(response);
+            loadListNames();
+            toggleDeleteList();
+            handleGear(listIndex);
+        })
+
+        .catch(error => console.log(error));
+
     }
 
-    const [modalDeleteItem, setModalDeleteItem] = useState(false);
-    const toggleDeleteItem = (city, country) => {
-        setModalDeleteItem(city+country);
+    const [modalDeleteItem, setModalDeleteItem] = useState('');
+    const toggleDeleteItem = (listIndex, itemIndex) => {
+        setModalDeleteItem(listIndex + itemIndex);
+        console.log(listIndex + itemIndex);
     };
     
 
-    function deleteListItem(city, country, list){
-        console.log('will send axios post to php script to delete this object from place array for this specific list.')
-        console.log(city, country, list);
+    function deleteListItem(listIndex, listItemIndex){
+        // console.log('will send axios post to php script to delete this object from place array for this specific list.')
+        axios.post('http://localhost/backend-cities-lookup/deleteItem.php', {listIndex: listIndex, listItemIndex: listItemIndex, userEmail: currentAccount.email},
+        {headers: {'Content-Type': 'application/json'}})
+        .then(response => {
+            console.log(response.data);
+            loadListNames();
+            setModalDeleteItem('');
+            handleGear(listIndex);
+        })
+
+        .catch(error => console.log(error));
+
+        
+        
+        // console.log(city, country, list);
         setModalDeleteItem('');
     }
 
 
-    // function defineRouteGeo(city, country){
+    function detectEnter(e, currentListName, listIndex){  
+        if (e.keyCode === 13) {
+            console.log('should work');
+            editListName(currentListName, listIndex);
+        } else {
+            console.log('not working');
+            return false;
+        }
+      }
 
-    // }
 
     return (
         <section id='lists-section'>
@@ -121,6 +151,11 @@ function Lists () {
             <Heading style={{textAlign:'center'}}>
                 {currentAccount.name + "'s Lists"}
             </Heading>
+            {currentAccount.email === 'demo@gmail.com' &&
+                <h3 style={{textAlign:'center', margin:'20px auto'}}>
+                Please create, modify, and/or delete any list! <br/>
+                Please play around with the app as you wish!
+            </h3>}
         </>
         }
         
@@ -161,7 +196,7 @@ function Lists () {
                     listsItems.map(each => (
                         <AccordionItem>
                             <AccordionHeader targetId={listsItems.indexOf(each)}><h4>{each.list_name}</h4></AccordionHeader>
-                            {each.place ?
+                            {each.place &&
                             <AccordionBody accordionId={listsItems.indexOf(each)}>
                                 <div style={{display:'flex', justifyContent:'start'}}>
                                     <Button outline color="dark" onClick={() => handleGear(listsItems.indexOf(each))}><BsGearFill/></Button>
@@ -182,7 +217,7 @@ function Lists () {
                                             </Input>
                                         </ModalBody>
                                         <ModalFooter style={{justifyContent:"center"}}>
-                                            <Button color="primary" outline onClick={() => editListName(each.list_name, listsItems.indexOf(each))}  disabled={edListName.length > 0 ? false : true}>
+                                            <Button color="primary" outline onClick={() => editListName(each.list_name, listsItems.indexOf(each))} onKeyDown={(e) => detectEnter(e, each.list_name, listsItems.indexOf(each))}  disabled={edListName.length > 0 ? false : true}>
                                             
                                                 Set New Name
                                             </Button>
@@ -199,7 +234,7 @@ function Lists () {
                                             <p style={{textAlign:'center'}}>Are You Sure You Want To Delete Your List: <h4>{each.list_name}?</h4></p>
                                         </ModalBody>
                                         <ModalFooter style={{justifyContent:"center"}}>
-                                            <Button color="danger" outline onClick={deleteList}>
+                                            <Button color="danger" outline onClick={() => deleteList(listsItems.indexOf(each))}>
                                             
                                                 Delete List
                                             </Button>
@@ -214,18 +249,18 @@ function Lists () {
                                     :
                                     ''
                                     }
-                                {
+                                {each.place.length > 0 &&
                                     <ul>{each.place.map(item => (
                                     <>
-                                    <li><strong>{item.city +', ' + item.country}</strong><Button style={{borderRadius:'30px'}} onClick={() => toggleDeleteItem(item.city, item.country)} outline color="danger" size="sm" ><IoMdRemove/></Button></li>
+                                    <li><strong>{item.city +', ' + item.country}</strong><Button style={{borderRadius:'30px'}} onClick={() => toggleDeleteItem(JSON.stringify(listsItems.indexOf(each)), JSON.stringify(each.place.indexOf(item)))} outline color="danger" size="sm" ><IoMdRemove/></Button></li>
                                                                        
-                                    <Modal isOpen={modalDeleteItem === item.city+item.country ? true : false}>
+                                    <Modal isOpen={modalDeleteItem === JSON.stringify(listsItems.indexOf(each)) + JSON.stringify(each.place.indexOf(item)) ? true : false}>
                                         <ModalHeader style={{justifyContent:'center'}}>Delete <strong>{item.city + ', ' + item.country}</strong>?</ModalHeader>
                                         <ModalBody>
-                                            <p style={{textAlign:'center'}}>Are You Sure You Want To Delete <strong>{item.city + ', ' + item.country}</strong> From Your List?</p>
+                                            <p style={{textAlign:'center'}}>Are You Sure You Want To Delete <strong>{item.city + ', ' + item.country}</strong> From {each.list_name}?</p>
                                         </ModalBody>
                                         <ModalFooter style={{justifyContent:"center"}}>
-                                            <Button color="danger" outline onClick={() => deleteListItem(item.city, item.country, each.list_name)}>
+                                            <Button color="danger" outline onClick={() => deleteListItem(listsItems.indexOf(each), each.place.indexOf(item))}>
                                             
                                                 Delete Item
                                             </Button>
@@ -238,10 +273,15 @@ function Lists () {
                                     )}</ul>
                                     
                                     }
+
+                                {each.place.length === 0 &&
+                                    <p>You have not added any places to this list!</p>
+                                }
                                     
                             </AccordionBody>
-                            :
+                            }
 
+                            {/* {each.place === undefined &&
                             <AccordionBody accordionId={listsItems.indexOf(each)}>
                                 <Button onClick={() => handleGear(listsItems.indexOf(each))}><BsGearFill/></Button>
                                     {fade === listsItems.indexOf(each) &&
@@ -278,7 +318,7 @@ function Lists () {
                                             <p style={{textAlign:'center'}}>Are You Sure You Want To Delete Your List: <h4>{each.list_name}?</h4></p>
                                         </ModalBody>
                                         <ModalFooter style={{justifyContent:"center"}}>
-                                            <Button color="danger" outline onClick={deleteList}>
+                                            <Button color="danger" outline onClick={() => deleteList(listsItems.indexOf(each))}>
                                             
                                                 Delete List
                                             </Button>
@@ -292,7 +332,8 @@ function Lists () {
                                 <p>You have not added any places to this list!</p>
                                 
                             </AccordionBody>
-                            }
+                            } */}
+
                         </AccordionItem>
                     ))
                 }   

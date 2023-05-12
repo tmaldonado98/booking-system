@@ -1,6 +1,12 @@
 #container-location {
   width: 50%;
-  margin: 50px auto 30px;
+  /* margin: 50px auto 30px; */
+  margin: auto;
+
+}
+
+p {
+  align-self: center;
 }
 
 #search-results {

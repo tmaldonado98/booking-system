@@ -192,7 +192,7 @@ export default function Stats(props) {
             setShowUnauth();
         } else if (currentAccount){
             setSaved(!saved);
-            toggleLists();
+            // toggleLists();
             updateListsItems();  //function to axios get lists, save to state, and then render onto dropdown
         }
 
@@ -262,7 +262,8 @@ export default function Stats(props) {
                 setTimeout(() => {
                     setChangesSaved(false)
                 }, 7000),
-                toggleNewList()
+                toggleNewList(),
+                updateListsItems()
             )
             .catch(error => {
                 console.error('Error: ' + error);
@@ -276,7 +277,8 @@ export default function Stats(props) {
 
     useEffect(() => {
         console.log(listsItems)
-    }, [listsItems])
+        updateListsItems();
+    }, [listsDropdownOpen])
 
     function savePlace(name){
         axios.post('http://localhost/backend-cities-lookup/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: name.list_name, userEmail: currentAccount.email, index: listsItems.indexOf(name)},
@@ -298,6 +300,7 @@ export default function Stats(props) {
                     setChangesSaved(false)
                 }, 7000)
                 console.log(response.data);
+                updateListsItems();
             }
         })
         .catch(error => {
@@ -328,7 +331,7 @@ export default function Stats(props) {
         <div id='heading-w-bookmark'>
             <Heading style={{textAlign: 'center'}} as='h4'>{props.data.name + ', ' + props.data._links['city:country'].name}</Heading>
                 <Dropdown toggle={handleSaveUnsave} isOpen={listsDropdownOpen} direction={'end'}>
-                  <DropdownToggle caret>Add To List </DropdownToggle>
+                  <DropdownToggle caret onClick={() => setListsDropdownOpen(prevState => !prevState)}>Add To List </DropdownToggle>
                   {!listsItems &&
                     <DropdownMenu>
                         <DropdownItem header style={{textAlign:"center"}}>Your Lists</DropdownItem>

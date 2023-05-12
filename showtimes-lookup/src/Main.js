@@ -138,7 +138,7 @@ useEffect(() => {
     <> 
       <Header />
 
-      <section>
+      <>
         <motion.div id='container-location'
           animate={{x: isAnimated && '25vw', y: isAnimated && '-15vh', width: isAnimated && '30%'}}
           transition={{duration: 0.75}}
@@ -148,8 +148,10 @@ useEffect(() => {
             <Input onChange={handleChange} onKeyDown={(e) => detectEnter(e)} value={text} size='md' htmlSize={20} width='auto' variant='flushed' placeholder='e.g. Los Angeles, United States'></Input>  
             {/*  style={{textTransform: "uppercase"}} */}
             <Button onClick={handleSearch} variant='solid'>Search</Button>
+            <Button variant='solid' onClick={() => setSelectedGeo('')}>
+              Remove Selected Place
+            </Button>
           </div>        
-
         </motion.div>
             <Alert color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
                 You have successfully signed in!
@@ -167,12 +169,12 @@ useEffect(() => {
         ''
         }
 
-        {/* {selectedPlace === true &&  */}
+
         <div id='selected-place'>
           {selectedGeo !== '' && <Stats data={selectedGeo} />}
         </div>
-        {/* } */}
-      </section>
+
+      </>
 
       <section id='stock-container'>
         <Heading as='h2' size='md' id='stock-header'>Major Cities Around The World</Heading>
