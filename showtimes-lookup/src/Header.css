@@ -1,9 +1,6 @@
 #nav {
     background: #252525;
-    padding: 16px;
-    /* display: flex;
-    justify-content: space-around;
-    align-items: center; */
+    padding: 6px;
 }
 
 .nav-buttons{
@@ -38,9 +35,15 @@
 }
 
 .modal-content {
-    background-color: #ffffff1c;
+    background-color: #ffffff42;
     backdrop-filter: blur(10px);
     color: #1b1b1b !important;
+
+}
+
+.modal-content h4, .modal-content h5 {
+    /* color: ivory !important; */
+    font-weight: bold;
 }
 
 .modal-content .form-control-lg, .modal-content .form-control-lg:active {
@@ -49,7 +52,11 @@
     font-weight: bold;
 }
 
-.alert {
+/* .alert {
     margin: 14px;
     margin-top: 0;
-}
+} */
+
+/* .modal-body {
+    margin-bottom: 24px;
+} */

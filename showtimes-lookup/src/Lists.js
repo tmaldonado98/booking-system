@@ -29,10 +29,9 @@ function Lists () {
             axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
             {headers: {'Content-Type': 'application/json'}})
             .then(response => {
-                console.log(JSON.parse(response.data.list_array));
+                // console.log(JSON.parse(response.data.list_array));
                 setListsItems(JSON.parse(response.data.list_array));
             })
-            console.log(currentAccount)
         }
 
     };
@@ -72,7 +71,7 @@ function Lists () {
         axios.post('http://localhost/backend-cities-lookup/editListName.php', {updatedListName: edListName, toList: currentListName, userEmail: currentAccount.email, index: listIndex},
         {headers: {'Content-Type': 'application/json'}})
         .then(response => {
-            console.log(response);
+            // console.log(response);
             loadListNames();
             toggleEditList();
             handleGear(listIndex);
@@ -91,7 +90,7 @@ function Lists () {
         axios.post('http://localhost/backend-cities-lookup/deleteList.php', {index: listIndex, userEmail: currentAccount.email},
         {headers: {'Content-Type': 'application/json'}})
         .then(response => {
-            console.log(response);
+            // console.log(response);
             loadListNames();
             toggleDeleteList();
             handleGear(listIndex);
@@ -104,7 +103,7 @@ function Lists () {
     const [modalDeleteItem, setModalDeleteItem] = useState('');
     const toggleDeleteItem = (listIndex, itemIndex) => {
         setModalDeleteItem(listIndex + itemIndex);
-        console.log(listIndex + itemIndex);
+        // console.log(listIndex + itemIndex);
     };
     
 
@@ -112,7 +111,7 @@ function Lists () {
         axios.post('http://localhost/backend-cities-lookup/deleteItem.php', {listIndex: listIndex, listItemIndex: listItemIndex, userEmail: currentAccount.email},
         {headers: {'Content-Type': 'application/json'}})
         .then(response => {
-            console.log(response.data);
+            // console.log(response.data);
             loadListNames();
             setModalDeleteItem('');
             handleGear(listIndex);

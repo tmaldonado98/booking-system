@@ -19,11 +19,6 @@ function Main() {
   const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount, listsItems, setListsItems} = useContext(MyContext);
   
   useEffect(() => {
-    // console.log(listsItems);
-    console.log(currentAccount)
-  }, [])
-
-  useEffect(() => {
     document.getElementById('focus').focus();
 
       axios.get(`https://api.teleport.org/api/cities/?search=${text}`,
@@ -34,9 +29,6 @@ function Main() {
       .catch(error => console.log(error));
   }, [])
 
-    // useEffect(() => {
-    //   // console.log(stockData);
-    // }, [stockData])
 
     function handleChange(event){
       setText(event.target.value);
@@ -80,11 +72,6 @@ function Main() {
     }
   }
 
-  // useEffect(() => {
-  //   // console.log(selectedGeo)
-  // }, [selectedGeo])
-
-
   return (
     <> 
       <Header />
@@ -119,7 +106,6 @@ function Main() {
 
         {selectedPlace === false ?
         <div id='search-results'>
-          {/* {console.log(embeddedResults)} */}
           {embeddedResults && embeddedResults.map(each => <ApiCards cardData={each.matching_full_name} fullData={each}/>)}
         </div>
         :

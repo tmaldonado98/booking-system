@@ -39,27 +39,6 @@ export default function Stats(props) {
 
     const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount, listsItems, setListsItems} = useContext(MyContext);
 
-    ///set listsItems state to user account's data ---- Migrated to header component
-    // useEffect(() => {
-    //     if (!currentAccount) {
-    //         // setShowUnauth();
-    //         return false;
-    //     } else if (currentAccount){
-    //         axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
-    //         {headers: {'Content-Type': 'application/json'}})
-    //         .then(response => {
-    //             console.log(JSON.parse(response.data.list_array));
-    //             setListsItems(JSON.parse(response.data.list_array));
-    //         })
-    //     }
-
-    // }, [currentAccount])
-
-    // useEffect(() => {
-    //     console.log(listsItems);
-    //     console.log(currentAccount);
-    // }, [])
-
     function setScoreFromSlug(){
         // console.log(slug)
         axios.get(`${slug._links['ua:scores'].href}`,
@@ -82,7 +61,6 @@ export default function Stats(props) {
         .catch(error => console.log(error))
         }
 
-        // console.log(selectedGeo)
         
     }, [selectedGeo])
 
@@ -186,8 +164,7 @@ export default function Stats(props) {
     }
 
     function handleSaveUnsave() {
-        // setShowUnauth();
-        // console.log(loggedIn)
+
         if (!currentAccount) {
             setShowUnauth();
         } else if (currentAccount){
@@ -245,10 +222,7 @@ export default function Stats(props) {
         setNewListName(event.target.value);
     }
     
-    let mutableInd = 0;
-
     function createNewList (ind) {
-        console.log(ind);
         if (newListName.length === 0) {
             onDismissChangesNotSaved();
             setTimeout(() => {
@@ -259,7 +233,7 @@ export default function Stats(props) {
             axios.post('http://localhost/backend-cities-lookup/insertToLists.php', {listName: newListName, userEmail: currentAccount.email},
             {headers: {'Content-Type':'application/json'}})
             .then(setNewListName(''))
-            .then(response => console.log(response.data))
+            // .then(response => console.log(response.data))
             .then(
                 onDismissChangesSaved(),
                 setTimeout(() => {
@@ -300,7 +274,7 @@ export default function Stats(props) {
                 setTimeout(() => {
                     setChangesNotSaved(false)
                 }, 7000);
-                console.log(response.data);
+                // console.log(response.data);
             }
             else if (response.data === true){
                 //conditional to alert with 'successful' message
@@ -308,7 +282,7 @@ export default function Stats(props) {
                 setTimeout(() => {
                     setChangesSaved(false)
                 }, 7000)
-                console.log(response.data);
+                // console.log(response.data);
                 updateListsItems();
             }
         })
@@ -319,21 +293,21 @@ export default function Stats(props) {
                 setChangesNotSaved(false)
             }, 7000);
         })
-        console.log('toList:' + name.list_name + ', index: ' + listsItems.indexOf(name))
+        // console.log('toList:' + name.list_name + ', index: ' + listsItems.indexOf(name))
     }
 
     function savePlaceAuto(name){
         axios.post('http://localhost/backend-cities-lookup/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: name.list_name, userEmail: currentAccount.email, index: listsItems.indexOf(name)+1},
         {headers: {'Content-Type':'application/json'}})
         .then(response => {
-            console.log(response.data)
+            // console.log(response.data)
            if (response.data !== true) {
                 //conditional to alert with 'unsuccessful' message
                 onDismissChangesNotSaved();
                 setTimeout(() => {
                     setChangesNotSaved(false)
                 }, 7000);
-                console.log(response.data);
+                // console.log(response.data);
             }
             else if (response.data === true){
                 //conditional to alert with 'successful' message
@@ -341,7 +315,7 @@ export default function Stats(props) {
                 setTimeout(() => {
                     setChangesSaved(false)
                 }, 7000)
-                console.log(response.data);
+                // console.log(response.data);
                 updateListsItems();
             }
         })
@@ -352,7 +326,7 @@ export default function Stats(props) {
                 setChangesNotSaved(false)
             }, 7000);
         })
-        console.log('toList:' + name.list_name + ', index: ' + listsItems.indexOf(name))
+        // console.log('toList:' + name.list_name + ', index: ' + listsItems.indexOf(name))
 
     }
 
@@ -510,7 +484,6 @@ export default function Stats(props) {
                         <AccordionBody accordionId="1">
                             <Heading style={{textAlign:'center'}} as='h2'>Annual Salaries</Heading>
                             <h4 style={{marginBottom:'28px'}}>(Average In USD)</h4>
-                            {/* {console.log(salaryInfo)} */}
                             <div id='salary-list' className='accordion-content'>
                                 <ul>
                                 {salaryInfo !== null && salaryInfo.salaries.map((each) => (

@@ -74,9 +74,6 @@ export default function Header (){
     function handleRegName(event){
         setNameRegValue(event.target.value);
     }
-    // useEffect(() => {
-    //     console.log(passwordValue)
-    // }, [passwordValue])
 
     function checkMatchingReg (event){
         if (event.target.value === passwordRegValue) {
@@ -144,13 +141,11 @@ export default function Header (){
             {headers: {'Content-Type': 'application/json'}})
             ///If account does not exist in database, response from php as false; else send object
             .then(response => {
-                console.log(response.data);
                 setCurrentAccount(response.data);
             })
             .then(setShowSuccessSignIn())
             .then(setEmailLogValue(''))
             .then(setPasswordLogValue(''))
-            // .then(console.log('Logged in!'))
             .catch(error => console.log(error))
             setModalConfirm(false);
         } else {
@@ -165,11 +160,11 @@ export default function Header (){
             axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
             {headers: {'Content-Type': 'application/json'}})
             .then(response => {
-                console.log(JSON.parse(response.data.list_array));
+                // console.log(JSON.parse(response.data.list_array));
                 setListsItems(JSON.parse(response.data.list_array));
             })
             // console.log(listsItems)
-            console.log('Logged In!');
+            // console.log('Logged In!');
         }
         else if (currentAccount === false){
             ///// STATE FOR ERROR MESSAGE IN MODAL

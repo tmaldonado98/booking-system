@@ -21,6 +21,7 @@ p {
   justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
+  margin: 32px auto;
 }
 
 #selected-place {
