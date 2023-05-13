@@ -1,5 +1,5 @@
 #container-location {
-  width: 50%;
+  /* width: 50%; */
   /* margin: 50px auto 30px; */
   margin: auto;
 
@@ -33,6 +33,8 @@ p {
 #location-comp {
   display: flex;
   flex-direction: column;
+  width: 50%;
+  margin: auto;
 }
 
 #stock-container {

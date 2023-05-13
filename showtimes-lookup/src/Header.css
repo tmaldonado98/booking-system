@@ -13,7 +13,7 @@
     gap: 24px;
     padding: 6px 16px;
     align-items: center;
-    margin: auto;
+    /* margin: auto; */
 }
 
 #nav h6 {
@@ -30,9 +30,26 @@
     display: flex;
     padding: 32px;
     justify-content: space-evenly;
-    width: 60%;
+    /* width: 60%; */
 }
 
 #demo-container {
     margin: 20px auto 0;
+}
+
+.modal-content {
+    background-color: #ffffff1c;
+    backdrop-filter: blur(10px);
+    color: #1b1b1b !important;
+}
+
+.modal-content .form-control-lg, .modal-content .form-control-lg:active {
+    background-color: #cccccc36 !important;
+    color: black;
+    font-weight: bold;
+}
+
+.alert {
+    margin: 14px;
+    margin-top: 0;
 }

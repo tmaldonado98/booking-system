@@ -1,8 +1,7 @@
 import './Header.css';
 import { Heading } from '@chakra-ui/react'
-import { Button, ButtonGroup, Modal, ModalHeader, ModalBody, ModalFooter, Input } from 'reactstrap';
+import { Alert, Button, ButtonGroup, Modal, ModalHeader, ModalBody, ModalFooter, Input } from 'reactstrap';
 import { useContext, useEffect, useState } from 'react';
-// import styled from '@emotion/styled';
 import axios from 'axios';
 import MyContext from './Context';
 import { Link, useLocation, useNavigate} from 'react-router-dom';
@@ -105,7 +104,7 @@ export default function Header (){
             // setPswInvalid(null);
             // setPswValid(null);
         } else {
-            console.log('Account not created');
+            showInvalidReg();
             return false;
         }
 
@@ -148,12 +147,14 @@ export default function Header (){
                 console.log(response.data);
                 setCurrentAccount(response.data);
             })
+            .then(setShowSuccessSignIn())
             .then(setEmailLogValue(''))
             .then(setPasswordLogValue(''))
             // .then(console.log('Logged in!'))
             .catch(error => console.log(error))
             setModalConfirm(false);
         } else {
+            showInvalidLog();
             return false; 
             ///later set error validation
         }
@@ -183,6 +184,7 @@ export default function Header (){
         // .then(response => {
         // //   console.log(response.data); // will return 'Session destroyed'
         // })
+        .then(setShowSignOut())
         .then(setCurrentAccount(null))
         .then(setListsItems(false))
         .then(setRegInvalid(null))
@@ -205,11 +207,49 @@ export default function Header (){
     const location = useLocation();
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     if (location.pathname === '/Lists' ||location.pathname === '/lists') {
-    //         navigate('/');
-    //     }
-    // }, [])
+
+    ///alerts
+    const [visibleSignIn, setVisibleSignIn] = useState(null);
+    const [visibleSignOut, setVisibleSignOut] = useState(null);
+
+    const onDismissSignInAlert = () => setVisibleSignIn(false);
+    const onDismissSignOut = () => setVisibleSignOut(false);
+    
+    function setShowSuccessSignIn() {
+        setVisibleSignIn(true);
+        setTimeout(() => {
+            setVisibleSignIn(false)
+        }, 5000)
+    }
+    
+    function setShowSignOut() {
+        setVisibleSignOut(true);
+        setTimeout(() => {
+            setVisibleSignOut(false)
+        }, 5000)
+    }
+
+    //alerts for auth modal
+    const [visibleInvalidLog, setVisibleInvalidLog] = useState(false);
+    const [visibleInvalidReg, setVisibleInvalidReg] = useState(false);
+
+    // const onDismissSignInAlert = () => setVisibleSignIn(false);
+    // const onDismissSignOut = () => setVisibleSignOut(false);
+    
+    function showInvalidLog() {
+        setVisibleInvalidLog(true);
+        setTimeout(() => {
+            setVisibleInvalidLog(false)
+        }, 5000)
+    }
+    
+    function showInvalidReg() {
+        setVisibleInvalidReg(true);
+        setTimeout(() => {
+            setVisibleInvalidReg(false)
+        }, 5000)
+    }
+
 
     return(
     <>
@@ -217,11 +257,7 @@ export default function Header (){
         {!currentAccount &&
         <>       
             <div className='nav-buttons'>
-                <Button onClick={toggle}>Sign In/Create Account</Button>
-                <h6 style={{margin:'0'}}>
-                    Sign In To Create Your Own Custom Lists Of Countries!
-                </h6>
-                <p style={{color:'ivory', margin:'0'}}><a href='https://tomasmaldonado.rf.gd' title='Tomas Maldonado Portfolio Website' target='_blank'><u>Page Creator</u></a></p>
+                <Button color='light' outline='filled' onClick={toggle}>Sign In/Create Account</Button>
             </div>
         
             <Modal isOpen={modal} toggle={toggle}>
@@ -254,8 +290,6 @@ export default function Header (){
                     type="email"
                     value={emailLogValue}
                     onChange={handleLogEmail}
-                    // valid={logValid}
-                    // invalid={logInvalid}
                     />
                     
                     <h4>Password</h4>
@@ -270,15 +304,19 @@ export default function Header (){
                         <p><u>Email Address:</u> demo@gmail.com</p>
                         <p><u>Password:</u> demo</p>
                     </div>
+                    
+                    <Alert color='danger' isOpen={visibleInvalidLog}>
+                        Invalid User Credentials.
+                    </Alert>
                 </ModalBody>
                 }
                 {rSelected === 2 &&
+                <>
                 <ModalBody>
                     <h4>Register Your Email Address</h4>
                   <Input
                     bsSize="lg"
                     type="email"
-                    // value={emailRegValue}
                     onChange={handleRegEmail}
                     valid={regValid}
                     invalid={regInvalid}
@@ -287,9 +325,7 @@ export default function Header (){
                     <h4>Create A Password</h4>
                     <Input
                         bsSize="lg"
-                        // value={passwordRegValue}
                         onChange={handleRegPassword}
-                        // onChange={(event) => setPasswordRegValue(event.target.value)}
                         type="password"
                     />
                     <h4>Confirm Your Password</h4>
@@ -308,7 +344,12 @@ export default function Header (){
                         type="text"
                     />
 
+
                 </ModalBody>
+                    <Alert color='danger' isOpen={visibleInvalidReg}>
+                        Invalid Account Credentials. Follow Instructions.
+                    </Alert>
+                </>
                 }
                 <ModalFooter style={{justifyContent: 'center'}}>
                     {rSelected === 1 &&
@@ -321,11 +362,12 @@ export default function Header (){
                     {rSelected === 2 &&
                     <Button color="primary" 
                     onClick={handleRegistration}
+                    
                     >
                         Create Account
                     </Button>
                     }
-                    <Button color="secondary" onClick={toggle}>
+                    <Button outline color="dark" onClick={toggle}>
                         Cancel
                     </Button>
                 </ModalFooter>
@@ -348,13 +390,12 @@ export default function Header (){
                 </Link>
                 }
                 <h5>Welcome, {currentAccount.name}!</h5>
-                <p style={{color:'ivory', margin:'0'}}><a href='https://tomasmaldonado.rf.gd' title='Tomas Maldonado Portfolio Website' target='_blank'>Page Creator</a></p>
-
             </div>
             <div>
 
             <Modal isOpen={modalConfirm} toggle={toggleConfirm}>
-                <ModalHeader toggle={toggleConfirm}>Sign Out?</ModalHeader>
+                {/* toggle={toggleConfirm} */}
+                <ModalHeader>Sign Out?</ModalHeader>
                 <ModalBody>
                     Please confirm that you wish to sign out.
                 </ModalBody>
@@ -375,23 +416,19 @@ export default function Header (){
         
         <section id="header-section"> 
             <nav>
-                <Heading as='h1' size='xl'>
+                <Heading style={{textAlign:'center'}} as='h1' size='xl'>
                     City Lookup
                 </Heading>
-                <Heading as='h2' size='md'>
-                    Ever wondered what it would be like to live in other cities? <br/>
-                    Look no further! Type in the name of a city and CityLookup will show you...
-                </Heading>
-                {currentAccount === null &&
-                <h4>
-                    Create lists of your favorite places! <br/>
-                    Create an account and sign in! <br/>
-                    Alternatively, you can use our <strong>demo account</strong>.
-                </h4>
-                }
             </nav>
-
         </section>
+
+        <Alert className='auth-alert' color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
+            You have successfully signed in!
+        </Alert>
+
+        <Alert className='auth-alert' color="primary" isOpen={visibleSignOut} toggle={onDismissSignOut}>
+            You have successfully signed out.
+        </Alert>
 
     </>    
     );

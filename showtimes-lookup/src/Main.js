@@ -4,7 +4,6 @@ import Header from './Header';
 import ApiCards from './ApiCards';
 import MyContext from './Context';
 import Stats from './Stats';
-import { Alert } from 'reactstrap';
 
 import { Heading, Text, Input, Button } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
@@ -19,58 +18,14 @@ function Main() {
 
   const { selectedPlace, setSelectedPlace ,  selectedGeo, setSelectedGeo , mapCreated, setMapCreated, currentAccount, setCurrentAccount, listsItems, setListsItems} = useContext(MyContext);
   
-  const [visibleSignIn, setVisibleSignIn] = useState(false);
-  const [visibleSignOut, setVisibleSignOut] = useState(false);
-
-
   useEffect(() => {
-    console.log(listsItems);
+    // console.log(listsItems);
     console.log(currentAccount)
   }, [])
 
-      ///set listsItems state to user account's data
-    //   useEffect(() => {
-    //     axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
-    //     {headers: {'Content-Type': 'application/json'}})
-    //     .then(response => {
-    //         console.log(JSON.parse(response.data.list_array));
-    //         setListsItems(JSON.parse(response.data.list_array));
-    //     })
-    // }, [currentAccount])
-
-
-
-  const onDismissSignInAlert = () => setVisibleSignIn(false);
-  const onDismissSignOut = () => setVisibleSignOut(false);
-
-
-  function setShowSuccessSignIn() {
-    setVisibleSignIn(true);
-    setTimeout(() => {
-        setVisibleSignIn(false)
-    }, 6000)
-}
-
-function setShowSignOut() {
-    setVisibleSignOut(true);
-    // setTimeout(() => {
-    //     setVisibleSignOut(false)
-    // }, 6000)
-}
-
-
-useEffect(() => {
-    if (currentAccount) {
-        setShowSuccessSignIn();
-    }
-    else if (!currentAccount){
-        setShowSignOut();
-    }
-
-}, [currentAccount])
-
-
   useEffect(() => {
+    document.getElementById('focus').focus();
+
       axios.get(`https://api.teleport.org/api/cities/?search=${text}`,
       {headers: {'Content-Type': 'application/json'}})
       .then(response => {
@@ -89,25 +44,22 @@ useEffect(() => {
     }    
 
   function handleSearch(){
-    axios.get(`https://api.teleport.org/api/cities/?search=${text}`, 
-    {headers: {'Content-Type': 'application/json'}})
-    
-    .then(response => {
-      setIsAnimated(true)
-      setCityData(response.data)
-      setEmbeddedResults(response.data._embedded["city:search-results"]);
-    })
-    .catch(error => console.log(error));
+    if(text.length > 0){
+      axios.get(`https://api.teleport.org/api/cities/?search=${text}`, 
+      {headers: {'Content-Type': 'application/json'}})
+      
+      .then(response => {
+        setIsAnimated(true)
+        setCityData(response.data)
+        setEmbeddedResults(response.data._embedded["city:search-results"]);
+      })
+      .catch(error => console.log(error));
+    } else {
+      document.getElementById('focus').focus();
+      return false;
+    }
 
   }
-  
-
-  // useEffect(() => {
-  //   // console.log(cityData);
-  //   // console.log(embeddedResults);
-
-  // }, [cityData])
-  
 
   function capitalizeFirstLetter(str) {
     const words = str.split(" ");
@@ -125,7 +77,6 @@ useEffect(() => {
     capitalizeFirstLetter(e.target.value);
     if (e.keyCode === 13) {
       handleSearch();
-      //  || e.keyCode === 32
     }
   }
 
@@ -139,27 +90,33 @@ useEffect(() => {
       <Header />
 
       <>
-        <motion.div id='container-location'
+        <div id='container-location'
           animate={{x: isAnimated && '25vw', y: isAnimated && '-15vh', width: isAnimated && '30%'}}
           transition={{duration: 0.75}}
         >
           <div id='location-comp'>   
-            <Text size='lg'>Show me information for:</Text>
-            <Input onChange={handleChange} onKeyDown={(e) => detectEnter(e)} value={text} size='md' htmlSize={20} width='auto' variant='flushed' placeholder='e.g. Los Angeles, United States'></Input>  
-            {/*  style={{textTransform: "uppercase"}} */}
+            <Heading style={{textAlign:'center'}} size='sm'>                    
+              Ever wondered what it would be like to live in other cities? <br/>
+              Look no further! Type in the name of a city and CityLookup will show you...
+            </Heading>
+            <Input id='focus' onChange={handleChange} onKeyDown={(e) => detectEnter(e)} value={text} size='md' htmlSize={20} width='auto' variant='flushed' placeholder='e.g. Los Angeles, United States'></Input>  
+
             <Button onClick={handleSearch} variant='solid'>Search</Button>
             <Button variant='solid' onClick={() => setSelectedGeo('')}>
               Remove Selected Place
             </Button>
-          </div>        
-        </motion.div>
-            <Alert className='auth-alert' color="success" isOpen={visibleSignIn} toggle={onDismissSignInAlert}>
-                You have successfully signed in!
-            </Alert>
+            {currentAccount === null &&
+              <Text style={{textAlign:'center', padding:'18px', margin:'0'}} size='sm'>
+                  Create lists of your favorite places! <br/>
+                  Create an account and sign in! <br/>
+                  Alternatively, you can use our <strong>demo account</strong>.
+              </Text>
+            
+                }
+          </div>    
 
-            <Alert className='auth-alert' color="primary" isOpen={visibleSignOut} toggle={onDismissSignOut}>
-                You have successfully signed out.
-            </Alert>
+        </div>
+
         {selectedPlace === false ?
         <div id='search-results'>
           {/* {console.log(embeddedResults)} */}

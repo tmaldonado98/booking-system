@@ -286,7 +286,7 @@ export default function Stats(props) {
 
 
     useEffect(() => {
-        console.log(listsItems)
+        // console.log(listsItems)
         updateListsItems();
     }, [listsDropdownOpen])
 
@@ -294,7 +294,6 @@ export default function Stats(props) {
         axios.post('http://localhost/backend-cities-lookup/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: name.list_name, userEmail: currentAccount.email, index: listsItems.indexOf(name)},
         {headers: {'Content-Type':'application/json'}})
         .then(response => {
-            console.log(response.data)
            if (response.data !== true) {
                 //conditional to alert with 'unsuccessful' message
                 onDismissChangesNotSaved();

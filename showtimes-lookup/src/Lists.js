@@ -46,7 +46,6 @@ function Lists () {
     // }, [listsItems])
 
     const [fade, setFade] = useState(null);
-    // const fadeRef = useRef(fade);
 
     function handleGear (key){
         if (fade === null) {
@@ -70,7 +69,6 @@ function Lists () {
     }
 
     function editListName(currentListName, listIndex){
-        // console.log('will send to php script to edit name in database');
         axios.post('http://localhost/backend-cities-lookup/editListName.php', {updatedListName: edListName, toList: currentListName, userEmail: currentAccount.email, index: listIndex},
         {headers: {'Content-Type': 'application/json'}})
         .then(response => {
@@ -82,8 +80,6 @@ function Lists () {
 
         .catch(error => console.log(error));
     }
-
-
 
 
     const [modalDeleteList, setModalDeleteList] = useState(false);
@@ -113,7 +109,6 @@ function Lists () {
     
 
     function deleteListItem(listIndex, listItemIndex){
-        // console.log('will send axios post to php script to delete this object from place array for this specific list.')
         axios.post('http://localhost/backend-cities-lookup/deleteItem.php', {listIndex: listIndex, listItemIndex: listItemIndex, userEmail: currentAccount.email},
         {headers: {'Content-Type': 'application/json'}})
         .then(response => {
@@ -127,21 +122,8 @@ function Lists () {
 
         
         
-        // console.log(city, country, list);
         setModalDeleteItem('');
     }
-
-
-    function detectEnter(e, currentListName, listIndex){  
-        if (e.keyCode === 13) {
-            console.log('should work');
-            editListName(currentListName, listIndex);
-        } else {
-            console.log('not working');
-            return false;
-        }
-      }
-
 
     return (
         <section id='lists-section'>
@@ -162,18 +144,20 @@ function Lists () {
         {!currentAccount &&
         <>
             <Header />
-            <Heading>
-                You Are Not Signed In!
-            </Heading>
-            <h4>
-                Sign in to create your own custom lists!
-            </h4>
-            <h4>
-                Head to the home page to browse without signing in
-            </h4>
-            <Link to='/'>
-                <Button>Home</Button>
-            </Link>
+            <div id="not-signed-in">
+                <Heading>
+                    You Are Not Signed In!
+                </Heading>
+                <h4>
+                    Sign in to create your own custom lists!
+                </h4>
+                <h4>
+                    Head to the home page to browse without signing in
+                </h4>
+                <Link to='/'>
+                    <Button color="dark" outline='filled'>Home</Button>
+                </Link>
+            </div>
 
         </>
         }
@@ -192,11 +176,11 @@ function Lists () {
             {listsItems !== null && listsItems !== false &&
             <UncontrolledAccordion stayOpen>
                 
-                {listsItems.map(obj => obj.place) &&
-                    listsItems.map(each => (
+                {/* {listsItems.map(obj => obj.place) && */}
+                    {listsItems.map(each => (
                         <AccordionItem>
                             <AccordionHeader targetId={listsItems.indexOf(each)}><h4>{each.list_name}</h4></AccordionHeader>
-                            {each.place &&
+                            {/* {each.place && */}
                             <AccordionBody accordionId={listsItems.indexOf(each)}>
                                 <div style={{display:'flex', justifyContent:'start'}}>
                                     <Button outline color="dark" onClick={() => handleGear(listsItems.indexOf(each))}><BsGearFill/></Button>
@@ -217,7 +201,7 @@ function Lists () {
                                             </Input>
                                         </ModalBody>
                                         <ModalFooter style={{justifyContent:"center"}}>
-                                            <Button color="primary" outline onClick={() => editListName(each.list_name, listsItems.indexOf(each))} onKeyDown={(e) => detectEnter(e, each.list_name, listsItems.indexOf(each))}  disabled={edListName.length > 0 ? false : true}>
+                                            <Button color="primary" outline onClick={() => editListName(each.list_name, listsItems.indexOf(each))} disabled={edListName.length > 0 ? false : true}>
                                             
                                                 Set New Name
                                             </Button>
@@ -249,7 +233,7 @@ function Lists () {
                                     :
                                     ''
                                     }
-                                {each.place.length > 0 &&
+                                {each.hasOwnProperty('place') && each.place.length > 0 ?
                                     <ul>{each.place.map(item => (
                                     <>
                                     <li><strong>{item.city +', ' + item.country}</strong><Button style={{borderRadius:'30px'}} onClick={() => toggleDeleteItem(JSON.stringify(listsItems.indexOf(each)), JSON.stringify(each.place.indexOf(item)))} outline color="danger" size="sm" ><IoMdRemove/></Button></li>
@@ -271,15 +255,18 @@ function Lists () {
                                     </Modal>
                                     </>)
                                     )}</ul>
+                                    :
                                     
+                                    <p>You have not added any places to this list!</p>
+
                                     }
 
-                                {each.place.length === 0 &&
+                                {/* { each.hasOwnProperty('place') === false || each.place.length === 0 &&
                                     <p>You have not added any places to this list!</p>
-                                }
+                                } */}
                                     
                             </AccordionBody>
-                            }
+                            {/* } */}
 
                             {/* {each.place === undefined &&
                             <AccordionBody accordionId={listsItems.indexOf(each)}>
