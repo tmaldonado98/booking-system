@@ -103,7 +103,7 @@ function Lists () {
     const [modalDeleteItem, setModalDeleteItem] = useState('');
     const toggleDeleteItem = (listIndex, itemIndex) => {
         setModalDeleteItem(listIndex + itemIndex);
-        // console.log(listIndex + itemIndex);
+        console.log(listIndex + itemIndex);
     };
     
 
@@ -114,7 +114,7 @@ function Lists () {
             // console.log(response.data);
             loadListNames();
             setModalDeleteItem('');
-            handleGear(listIndex);
+            // handleGear(listIndex);
         })
 
         .catch(error => console.log(error));
@@ -265,61 +265,6 @@ function Lists () {
                                 } */}
                                     
                             </AccordionBody>
-                            {/* } */}
-
-                            {/* {each.place === undefined &&
-                            <AccordionBody accordionId={listsItems.indexOf(each)}>
-                                <Button onClick={() => handleGear(listsItems.indexOf(each))}><BsGearFill/></Button>
-                                    {fade === listsItems.indexOf(each) &&
-                                    
-                                    <div className="container-gear-buttons">
-                                        <Button onClick={toggleEditList} color="primary" outline>Edit List Name</Button><Button onClick={toggleDeleteList} color="primary" outline>Delete List</Button>
-                                    
-                                    <Modal isOpen={modalEditList}>
-                                        <ModalHeader style={{justifyContent:'center'}}>Change List Name</ModalHeader>
-                                        <ModalBody>
-                                            <p style={{textAlign:'center'}}>Your List Is Currently Named: <h4>{each.list_name}</h4></p>
-                                            
-                                            <Input
-                                            placeholder={each.list_name}
-                                            onChange={handleListName}
-                                            >
-                                            </Input>
-                                        </ModalBody>
-                                        <ModalFooter style={{justifyContent:"center"}}>
-                                            <Button color="primary" outline onClick={() => editListName(each.list_name)}  disabled={edListName.length > 0 ? false : true}>
-                                            
-                                                Set New Name
-                                            </Button>
-                                            <Button color="secondary" outline onClick={toggleEditList}>
-                                                Cancel
-                                            </Button>
-                                        </ModalFooter>
-                                    </Modal>
-
-
-                                    <Modal isOpen={modalDeleteList}>
-                                        <ModalHeader style={{justifyContent:'center'}}>Delete List</ModalHeader>
-                                        <ModalBody>
-                                            <p style={{textAlign:'center'}}>Are You Sure You Want To Delete Your List: <h4>{each.list_name}?</h4></p>
-                                        </ModalBody>
-                                        <ModalFooter style={{justifyContent:"center"}}>
-                                            <Button color="danger" outline onClick={() => deleteList(listsItems.indexOf(each))}>
-                                            
-                                                Delete List
-                                            </Button>
-                                            <Button color="secondary" outline onClick={toggleDeleteList}>
-                                                Cancel
-                                            </Button>
-                                        </ModalFooter>
-                                    </Modal>
-                                    </div>
-                                    }
-                                <p>You have not added any places to this list!</p>
-                                
-                            </AccordionBody>
-                            } */}
-
                         </AccordionItem>
                     ))
                 }   

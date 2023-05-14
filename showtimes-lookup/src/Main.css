@@ -56,3 +56,9 @@ p {
   margin: auto;
   margin-top: 42px;
 }
+
+@media screen and (max-width: 600px) {
+  #selected-place {
+    width: 100%;
+  }
+}

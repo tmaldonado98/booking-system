@@ -187,7 +187,6 @@ export default function Stats(props) {
         if (activeAccordionId === '3' && mapCreated === false) {
             setMapCreated(true); 
             maptilersdk.config.apiKey = 'w2XzC62C0m417hgxO9LK'; ///
-            // maptilersdk.config.origin = 'https://citylookup.rf.gd';
 
             let lng = geonameId.location.latlon.longitude;
             let lat = geonameId.location.latlon.latitude;
@@ -195,9 +194,11 @@ export default function Stats(props) {
 
             const map = new maptilersdk.Map({
             container: 'map-container', // container's id or the HTML element to render the map
-            style: maptilersdk.MapStyle.STREETS,
+            style: 'https://api.maptiler.com/maps/streets/style.json?key=w2XzC62C0m417hgxO9LK',
+            // maptilersdk.MapStyle.STREETS,
             center: [lng, lat], // starting position [lng, lat]
             zoom: 9, // starting zoom;
+            origin: 'https://citylookup.rf.gd',
 
             });
 
@@ -205,6 +206,7 @@ export default function Stats(props) {
             .setLngLat([lng, lat])
             .addTo(map);
     
+
         } 
 
     }, [activeAccordionId])
@@ -301,7 +303,7 @@ export default function Stats(props) {
         axios.post('https://citylookup.rf.gd/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: name.list_name, userEmail: currentAccount.email, index: listsItems.indexOf(name)+1},
         {headers: {'Content-Type':'application/json'}})
         .then(response => {
-            // console.log(response.data)
+            console.log(response.data)
            if (response.data !== true) {
                 //conditional to alert with 'unsuccessful' message
                 onDismissChangesNotSaved();
@@ -681,29 +683,10 @@ export default function Stats(props) {
                     </AccordionItem>
 
                     <AccordionItem>
-                        <AccordionHeader targetId='6'><h4>Leisure, Language & Internet</h4></AccordionHeader>
+                        <AccordionHeader targetId='6'><h4>Language, Internet & Leisure</h4></AccordionHeader>
                         <AccordionBody accordionId='6'>
                             <section id='culture-section'>
-                                <div id='leisure-div' className=' accordion-content'>
-                                    <h4>Leisure</h4>
-                                    <ul>
-                                        {/* .slice(0,3) */}
-                                    {slugDetails !== null && slugDetails.categories[4].data.map((each) => (
-                                        <li key={each.id}>
-                                            <h5>
-                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
-                                            </h5>
-                                            <p>
-                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''}
-                                            {/*  */}
-                                            </p>
-                                        </li>
-                                    ))
-                                    }
-                                    </ul>
-                                </div>
-
-                                <div id='language-div' className=' accordion-content'>
+                            <div id='language-div' className=' accordion-content'>
                                     <h4>Language(s)</h4>
                                     <ul>
                                         {/* .slice(0,3) */}
@@ -742,7 +725,7 @@ export default function Stats(props) {
                                                 Average {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
                                             </h5>
                                             <p>
-                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''} / 100
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''}
                                             </p>
                                         </li>
                                     ))
@@ -760,6 +743,26 @@ export default function Stats(props) {
                                     }
                                     </ul>
                                 </div>
+
+                                <div id='leisure-div' className=' accordion-content'>
+                                    <h4>Leisure</h4>
+                                    <ul>
+                                        {/* .slice(0,3) */}
+                                    {slugDetails !== null && slugDetails.categories[4].data.map((each) => (
+                                        <li key={each.id}>
+                                            <h5>
+                                                {each.label.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                                            </h5>
+                                            <p>
+                                                {each.float_value ? (each.float_value).toFixed(2) : each.percent_value ? ((each.percent_value) * 100).toFixed(1) +'%' : each.int_value ? each.int_value : each.string_value ? each.string_value : ''}
+                                            {/*  */}
+                                            </p>
+                                        </li>
+                                    ))
+                                    }
+                                    </ul>
+                                </div>
+
                             </section>
 
                         </AccordionBody>

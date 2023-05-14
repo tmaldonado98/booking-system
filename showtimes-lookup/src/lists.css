@@ -29,3 +29,9 @@
     width: 100%;
     gap: 24px;
 }
+
+@media screen and (max-width: 600px) {
+    #lists-container {
+      padding: 0;
+    }
+  }
