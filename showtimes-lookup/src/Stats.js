@@ -153,7 +153,7 @@ export default function Stats(props) {
         if (!currentAccount) {
             return false;
         } else if (currentAccount){
-            axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
+            axios.post('https://citylookup.rf.gd/retrieveLists.php', {email: currentAccount.email},
             {headers: {'Content-Type': 'application/json'}})
             .then(response => {
                 console.log(JSON.parse(response.data.list_array));
@@ -187,6 +187,7 @@ export default function Stats(props) {
         if (activeAccordionId === '3' && mapCreated === false) {
             setMapCreated(true); 
             maptilersdk.config.apiKey = 'w2XzC62C0m417hgxO9LK'; ///
+            // maptilersdk.config.origin = 'https://citylookup.rf.gd';
 
             let lng = geonameId.location.latlon.longitude;
             let lat = geonameId.location.latlon.latitude;
@@ -230,7 +231,7 @@ export default function Stats(props) {
             }, 7000)
             return false;
         } else {
-            axios.post('http://localhost/backend-cities-lookup/insertToLists.php', {listName: newListName, userEmail: currentAccount.email},
+            axios.post('https://citylookup.rf.gd/insertToLists.php', {listName: newListName, userEmail: currentAccount.email},
             {headers: {'Content-Type':'application/json'}})
             .then(setNewListName(''))
             // .then(response => console.log(response.data))
@@ -265,7 +266,7 @@ export default function Stats(props) {
     }, [listsDropdownOpen])
 
     function savePlace(name){
-        axios.post('http://localhost/backend-cities-lookup/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: name.list_name, userEmail: currentAccount.email, index: listsItems.indexOf(name)},
+        axios.post('https://citylookup.rf.gd/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: name.list_name, userEmail: currentAccount.email, index: listsItems.indexOf(name)},
         {headers: {'Content-Type':'application/json'}})
         .then(response => {
            if (response.data !== true) {
@@ -297,7 +298,7 @@ export default function Stats(props) {
     }
 
     function savePlaceAuto(name){
-        axios.post('http://localhost/backend-cities-lookup/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: name.list_name, userEmail: currentAccount.email, index: listsItems.indexOf(name)+1},
+        axios.post('https://citylookup.rf.gd/updateLists.php', {city: selectedGeo.name, country: selectedGeo._links['city:country'].name, toList: name.list_name, userEmail: currentAccount.email, index: listsItems.indexOf(name)+1},
         {headers: {'Content-Type':'application/json'}})
         .then(response => {
             // console.log(response.data)

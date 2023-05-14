@@ -86,7 +86,7 @@ export default function Header (){
     }
     async function handleRegistration(){
         if (emailRegex.test(emailRegValue) === true && pswValid === true) {
-            await axios.post('http://localhost/backend-cities-lookup/createAcct.php', {emailValue: emailRegValue, passwordValue: passwordRegValue, nameValue: nameRegValue},  
+            await axios.post('https://citylookup.rf.gd/createAcct.php', {emailValue: emailRegValue, passwordValue: passwordRegValue, nameValue: nameRegValue},  
             {headers: {'Content-Type':'application/json'}})
             .then(response => {
                 setCurrentAccount(response.data);
@@ -137,11 +137,16 @@ export default function Header (){
 
     async function handleSignIn (address, pass){   ////POST user credentials to logIn.php .. Script checks if credentials are valid. If so, returns json object
         if (emailRegex.test(emailLogValue) === true && passwordLogValue.length > 0) {
-            await axios.post('http://localhost/backend-cities-lookup/logIn.php', {email: address, password: pass},  
+            await axios.post('https://citylookup.rf.gd/logIn.php', {email: address, password: pass},  
             {headers: {'Content-Type': 'application/json'}})
             ///If account does not exist in database, response from php as false; else send object
             .then(response => {
-                setCurrentAccount(response.data);
+                if(response.data !== false){
+                    setCurrentAccount(response.data);
+                } else {
+                    showInvalidLog();
+                    // return false;
+                }
             })
             .then(setShowSuccessSignIn())
             .then(setEmailLogValue(''))
@@ -156,8 +161,8 @@ export default function Header (){
     }
 
     useEffect(() => {
-        if (currentAccount){
-            axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
+        if (currentAccount !== false && currentAccount !== null){
+            axios.post('https://citylookup.rf.gd/retrieveLists.php', {email: currentAccount.email},
             {headers: {'Content-Type': 'application/json'}})
             .then(response => {
                 // console.log(JSON.parse(response.data.list_array));
@@ -169,12 +174,13 @@ export default function Header (){
         else if (currentAccount === false){
             ///// STATE FOR ERROR MESSAGE IN MODAL
             console.log('User account does not exist in our records!')
+            showInvalidLog();
         }
         // console.log(currentAccount)
     }, [currentAccount])
 
     function handleSignOut (){
-        axios.post('http://localhost/backend-cities-lookup/destroySession.php',
+        axios.post('https://citylookup.rf.gd/destroySession.php',
         {headers: {'Content-Type': 'application/json'}})
         // .then(response => {
         // //   console.log(response.data); // will return 'Session destroyed'
@@ -253,6 +259,7 @@ export default function Header (){
         <>       
             <div className='nav-buttons'>
                 <Button color='light' outline='filled' onClick={toggle}>Sign In/Create Account</Button>
+                <p>Information sourced from the Teleport API</p>
             </div>
         
             <Modal isOpen={modal} toggle={toggle}>
@@ -296,8 +303,8 @@ export default function Header (){
                     />
                     <div id='demo-container'>
                         <h4>Demo Account</h4>
-                        <p><u>Email Address:</u> demo@gmail.com</p>
-                        <p><u>Password:</u> demo</p>
+                        <p><u>Email Address:</u> second@gmail.com</p>
+                        <p><u>Password:</u> second</p>
                     </div>
                     
                     <Alert color='danger' isOpen={visibleInvalidLog}>
@@ -373,18 +380,19 @@ export default function Header (){
         {currentAccount &&
         <>
             <div className='nav-buttons'>
-                <Button onClick={toggleConfirm}>Sign Out</Button>
+                <Button color='light' outline='filled' onClick={toggleConfirm}>Sign Out</Button>
                 {location.pathname === '/' ?
                 <Link to='/Lists'>
-                    <Button>My Lists</Button>
+                    <Button color='light' outline='filled'>My Lists</Button>
                 </Link>
                 :
                 location.pathname === '/lists' || location.pathname === '/Lists' &&
                 <Link to='/'>
-                    <Button>Home</Button>
+                    <Button color='light' outline='filled'>Home</Button>
                 </Link>
                 }
                 <h5>Welcome, {currentAccount.name}!</h5>
+                <p>Information sourced from the Teleport API</p>
             </div>
             <div>
 

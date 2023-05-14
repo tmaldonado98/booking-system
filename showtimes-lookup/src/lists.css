@@ -13,8 +13,14 @@
 #lists-container {
     width: 80%;
     margin: auto;
+    margin-bottom: 35vh;
     padding: 30px;
+    /* height: 60vh; */
 }
+/* 
+#lists-section {
+    height: 100vh;
+} */
 
 .container-gear-buttons {
     display: flex;

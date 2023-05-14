@@ -4,13 +4,18 @@
 }
 
 .nav-buttons{
-    width: fit-content;
+    /* width: fit-content; */
     display: flex;
     justify-content: space-evenly;
     gap: 24px;
     padding: 6px 16px;
     align-items: center;
     /* margin: auto; */
+    color: ivory;
+}
+
+.nav-buttons p{
+    margin: 0;
 }
 
 #nav h6 {

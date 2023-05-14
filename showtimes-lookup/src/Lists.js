@@ -26,7 +26,7 @@ function Lists () {
             // setShowUnauth();
             return false;
         } else if (currentAccount){
-            axios.post('http://localhost/backend-cities-lookup/retrieveLists.php', {email: currentAccount.email},
+            axios.post('https://citylookup.rf.gd/retrieveLists.php', {email: currentAccount.email},
             {headers: {'Content-Type': 'application/json'}})
             .then(response => {
                 // console.log(JSON.parse(response.data.list_array));
@@ -68,7 +68,7 @@ function Lists () {
     }
 
     function editListName(currentListName, listIndex){
-        axios.post('http://localhost/backend-cities-lookup/editListName.php', {updatedListName: edListName, toList: currentListName, userEmail: currentAccount.email, index: listIndex},
+        axios.post('https://citylookup.rf.gd/editListName.php', {updatedListName: edListName, toList: currentListName, userEmail: currentAccount.email, index: listIndex},
         {headers: {'Content-Type': 'application/json'}})
         .then(response => {
             // console.log(response);
@@ -87,7 +87,7 @@ function Lists () {
     };
 
     function deleteList(listIndex){
-        axios.post('http://localhost/backend-cities-lookup/deleteList.php', {index: listIndex, userEmail: currentAccount.email},
+        axios.post('https://citylookup.rf.gd/deleteList.php', {index: listIndex, userEmail: currentAccount.email},
         {headers: {'Content-Type': 'application/json'}})
         .then(response => {
             // console.log(response);
@@ -108,7 +108,7 @@ function Lists () {
     
 
     function deleteListItem(listIndex, listItemIndex){
-        axios.post('http://localhost/backend-cities-lookup/deleteItem.php', {listIndex: listIndex, listItemIndex: listItemIndex, userEmail: currentAccount.email},
+        axios.post('https://citylookup.rf.gd/deleteItem.php', {listIndex: listIndex, listItemIndex: listItemIndex, userEmail: currentAccount.email},
         {headers: {'Content-Type': 'application/json'}})
         .then(response => {
             // console.log(response.data);
@@ -132,7 +132,7 @@ function Lists () {
             <Heading style={{textAlign:'center'}}>
                 {currentAccount.name + "'s Lists"}
             </Heading>
-            {currentAccount.email === 'demo@gmail.com' &&
+            {currentAccount.email === 'second@gmail.com' &&
                 <h3 style={{textAlign:'center', margin:'20px auto'}}>
                 Please create, modify, and/or delete any list! <br/>
                 Please play around with the app as you wish!
